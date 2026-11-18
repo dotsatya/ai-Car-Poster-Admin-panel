@@ -4,7 +4,7 @@ import * as React from "react"
 import { TEMPLATE_PHOTOS, TemplatePhoto } from "@/lib/templatePhotos"
 import { TemplateHeader } from "@/components/templates/template-header"
 import { TemplateFilters } from "@/components/templates/template-filters"
-import { TemplateGrid } from "@/components/templates/template-grid"
+import { TemplateTable } from "@/components/templates/template-table"
 import { TemplateModal } from "@/components/templates/template-modal"
 
 const STORAGE_KEY = "poster_gen_templates_v1"
@@ -130,8 +130,8 @@ export default function TemplatesPage() {
         onSearchChange={setSearch}
       />
 
-      {/* Templates Responsive Grid with Edit Action */}
-      <TemplateGrid
+      {/* All Templates in Paginated Table View (10 per page) */}
+      <TemplateTable
         templates={filteredTemplates}
         onEditTemplate={handleOpenEditModal}
       />

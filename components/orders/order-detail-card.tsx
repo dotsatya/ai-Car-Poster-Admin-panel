@@ -1,65 +1,118 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { ArrowLeft, ExternalLink, Download, Check } from "lucide-react"
-import { DemoOrder } from "@/lib/demoOrder"
+import * as React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  ExternalLink,
+  Download,
+  Check,
+  SlidersHorizontal,
+  ArrowRight,
+  WandSparkles,
+  Package,
+} from "lucide-react";
+import { DemoOrder } from "@/lib/demoOrder";
 
 interface OrderDetailCardProps {
-  order: DemoOrder
+  order: DemoOrder;
 }
 
 export function OrderDetailCard({ order }: OrderDetailCardProps) {
-  const [note, setNote] = React.useState("")
-  const [savedNotes, setSavedNotes] = React.useState<string[]>(order.notes || [])
-  const [isSaved, setIsSaved] = React.useState(false)
+  const router = useRouter();
+  const [note, setNote] = React.useState("");
+  const [savedNotes, setSavedNotes] = React.useState<string[]>(
+    order.notes || [],
+  );
+  const [isSaved, setIsSaved] = React.useState(false);
+  const [currentStage, setCurrentStage] = React.useState<DemoOrder["stage"]>(
+    order.stage,
+  );
+
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("production_orders_store");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          const match = parsed.find(
+            (p: any) =>
+              (p.cleanId && p.cleanId === order.cleanId) ||
+              (p.id && (p.id === order.id || p.id === `#${order.cleanId}`)),
+          );
+          if (match?.stage) {
+            let s = match.stage;
+            if (s === "Received") s = "Order Received";
+            else if (s === "Preparing artwork") s = "Preparing Artwork";
+            else if (
+              s === "Sent to printer" ||
+              s === "Order confirmed and logged"
+            )
+              s = "Order Confirmed";
+            else if (s === "Ready for shipment") s = "Quality Check & Packing";
+            else if (s === "Completed") s = "Delivered";
+            setCurrentStage(s);
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [order.cleanId, order.id]);
 
   function handleSaveNote(e: React.FormEvent) {
-    e.preventDefault()
-    if (!note.trim()) return
-    setSavedNotes((prev) => [...prev, note.trim()])
-    setNote("")
-    setIsSaved(true)
-    setTimeout(() => setIsSaved(false), 2000)
+    e.preventDefault();
+    if (!note.trim()) return;
+    setSavedNotes((prev) => [...prev, note.trim()]);
+    setNote("");
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 2000);
   }
 
   function handleDownloadArt(itemName: string) {
-    alert(`Downloading 300 DPI museum-grade print asset for: ${itemName}`)
+    alert(`Downloading 300 DPI museum-grade print asset for: ${itemName}`);
   }
 
   const getPaymentBadge = (status: DemoOrder["payment"]["status"]) => {
     switch (status) {
       case "Paid":
-        return "bg-emerald-950/60 text-emerald-400 border-emerald-800/40"
+        return "bg-emerald-950/60 text-emerald-400 border-emerald-800/40";
       case "Pending":
-        return "bg-amber-950/60 text-amber-400 border-amber-800/40"
+        return "bg-amber-950/60 text-amber-400 border-amber-800/40";
       case "Refunded":
-        return "bg-rose-950/60 text-rose-400 border-rose-800/40"
+        return "bg-rose-950/60 text-rose-400 border-rose-800/40";
       case "Cancelled":
-        return "bg-zinc-800/60 text-zinc-400 border-zinc-700/40"
+        return "bg-zinc-800/60 text-zinc-400 border-zinc-700/40";
     }
-  }
+  };
 
   const getStageBadge = (stage: DemoOrder["stage"]) => {
     switch (stage) {
+      case "Order Received":
+        return "bg-zinc-800 text-zinc-300 border-zinc-700/60";
+      case "Order Confirmed":
+      case "Order confirmed and logged" as any:
+        return "bg-violet-950/70 text-violet-400 border-violet-800/40";
+      case "Preparing Artwork":
+        return "bg-amber-950/70 text-amber-400 border-amber-800/40";
       case "Printing":
-      case "Painting":
-        return "bg-blue-950/70 text-blue-400 border-blue-800/40"
+        return "bg-blue-950/70 text-blue-400 border-blue-800/40";
+      case "Quality Check & Packing":
+        return "bg-yellow-950/70 text-yellow-400 border-yellow-800/40";
       case "Shipped":
-        return "bg-emerald-950/70 text-emerald-400 border-emerald-800/40"
-      case "Received":
-        return "bg-amber-950/70 text-amber-400 border-amber-800/40"
-      case "Packing":
-        return "bg-purple-950/70 text-purple-400 border-purple-800/40"
+        return "bg-cyan-950/70 text-cyan-400 border-cyan-800/40";
+      case "Out for Delivery":
+        return "bg-indigo-950/70 text-indigo-400 border-indigo-800/40";
       case "Delivered":
-        return "bg-teal-950/70 text-teal-400 border-teal-800/40"
-      case "None":
-        return null
+        return "bg-emerald-950/70 text-emerald-400 border-emerald-800/40";
+      default:
+        return "bg-zinc-800 text-zinc-300 border-zinc-700/60";
     }
-  }
+  };
 
-  const stageBadge = getStageBadge(order.stage)
+  const stageBadge = getStageBadge(currentStage || order.stage);
 
   return (
     <div className="flex flex-col gap-4 max-w-5xl">
@@ -77,26 +130,37 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
       {/* Main Order Card */}
       <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-6">
         {/* Top Header Row */}
-        <div className="flex items-center justify-between pb-2">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Order {order.id}
-          </h1>
-          <div className="flex items-center gap-2">
-            <span
-              className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getPaymentBadge(
-                order.payment.status
-              )}`}
-            >
-              {order.payment.status}
-            </span>
-            {stageBadge ? (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 gap-3 border-b border-border/60">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              Order {order.id}
+            </h1>
+            <div className="flex items-center gap-2">
               <span
-                className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${stageBadge}`}
+                className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getPaymentBadge(
+                  order.payment.status,
+                )}`}
               >
-                {order.stage}
+                {order.payment.status}
               </span>
-            ) : null}
+              {stageBadge ? (
+                <span
+                  className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${stageBadge}`}
+                >
+                  {currentStage || order.stage}
+                </span>
+              ) : null}
+            </div>
           </div>
+          {/* Update Stage / Update Status button */}
+          <Link
+            href={`/dashboard/production/${order.cleanId}`}
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-primary/40 bg-primary/10 hover:bg-primary/20 text-foreground hover:text-white text-xs sm:text-sm font-medium px-4 py-2 transition-all shadow-sm active:scale-[0.98] w-fit group"
+            title="Open this order in Production queue to update stage"
+          >
+            <p>Go to Production Page and uypdate the current Stage</p>
+            <ArrowRight className="size-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+          </Link>
         </div>
 
         {/* Customer / Shipping / Payment Metadata: 3 Columns */}
@@ -156,20 +220,23 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-border/40 text-xs font-normal text-muted-foreground">
-                  <th className="pb-2.5 font-normal">Artwork</th>
-                  <th className="pb-2.5 font-normal">Size</th>
-                  <th className="pb-2.5 font-normal">Qty</th>
-                  <th className="pb-2.5 font-normal">Unit</th>
-                  <th className="pb-2.5 font-normal">Line total</th>
-                  <th className="pb-2.5 font-normal w-10"></th>
+                <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
+                  <th className="py-3.5 px-4 font-medium">Artwork</th>
+                  <th className="py-3.5 px-4 font-medium">Size</th>
+                  <th className="py-3.5 px-4 font-medium">Qty</th>
+                  <th className="py-3.5 px-4 font-medium">Unit</th>
+                  <th className="py-3.5 px-4 font-medium">Line total</th>
+                  <th className="py-3.5 px-4 font-medium w-10 text-right"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/30">
+              <tbody className="divide-y divide-border/40">
                 {order.items.map((art) => (
-                  <tr key={art.id} className="hover:bg-secondary/20 transition-colors">
+                  <tr
+                    key={art.id}
+                    className="hover:bg-secondary/20 transition-colors"
+                  >
                     {/* Artwork name & poster photo thumbnail */}
-                    <td className="py-4">
+                    <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3.5">
                         <div className="relative size-12 rounded-sm overflow-hidden bg-black/60 border border-border/60 shrink-0 shadow-sm">
                           {art.image ? (
@@ -203,23 +270,23 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                       </div>
                     </td>
 
-                    <td className="py-4 font-normal text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-normal text-foreground text-sm">
                       {art.size}
                     </td>
 
-                    <td className="py-4 font-normal text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-normal text-foreground text-sm">
                       {art.qty}
                     </td>
 
-                    <td className="py-4 font-normal text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-normal text-foreground text-sm">
                       {art.unitPrice}
                     </td>
 
-                    <td className="py-4 font-medium text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-medium text-foreground text-sm">
                       {art.lineTotal}
                     </td>
 
-                    <td className="py-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <button
                         type="button"
                         onClick={() => handleDownloadArt(art.name)}
@@ -238,10 +305,16 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
           {/* Subtotal / Shipping / Total Line */}
           <div className="flex items-center justify-end gap-6 pt-5 pb-1 text-sm">
             <span className="font-normal text-muted-foreground">
-              Subtotal <span className="font-normal text-foreground">{order.subtotal}</span>
+              Subtotal{" "}
+              <span className="font-normal text-foreground">
+                {order.subtotal}
+              </span>
             </span>
             <span className="font-normal text-muted-foreground">
-              Shipping <span className="font-normal text-foreground">{order.shippingFee}</span>
+              Shipping{" "}
+              <span className="font-normal text-foreground">
+                {order.shippingFee}
+              </span>
             </span>
             <span className="font-bold text-foreground text-sm sm:text-base ml-2">
               Total {order.total}
@@ -259,9 +332,13 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
             <div className="space-y-2">
               {order.statusHistory.map((step, idx) => (
                 <div key={idx} className="text-sm">
-                  <span className="font-semibold text-foreground">{step.time}</span>
+                  <span className="font-semibold text-foreground">
+                    {step.time}
+                  </span>
                   <span className="text-muted-foreground/80"> · </span>
-                  <span className="font-normal text-muted-foreground">{step.label}</span>
+                  <span className="font-normal text-muted-foreground">
+                    {step.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -284,7 +361,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
               <div className="flex items-center gap-3">
                 <button
                   type="submit"
-                  className="rounded-md border border-border/80 bg-card px-4 py-1.5 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border/80 bg-card/80 px-3.5 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
                 >
                   Save note
                 </button>
@@ -311,7 +388,198 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
             </form>
           </div>
         </div>
+
+        {/* Customer's Recent AI Generations (Max 5 Latest) */}
+        <div className="pt-4 border-t border-border/60">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-normal text-muted-foreground block">
+                Customer&apos;s Recent AI Generations
+              </span>
+              <span className="text-xs text-muted-foreground">
+                (Latest {order.customerRecentGenerations?.length || 0})
+              </span>
+            </div>
+            <Link
+              href={`/dashboard/ai-generations?search=${encodeURIComponent(order.customer.email)}`}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline hover:text-primary/90 transition-colors"
+            >
+              <WandSparkles className="size-3 text-muted-foreground" />
+              <span>View All Generations</span>
+              <ArrowRight className="size-3" />
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
+                  <th className="py-3.5 px-4 font-medium">Date</th>
+                  <th className="py-3.5 px-4 font-medium">Template</th>
+                  <th className="py-3.5 px-4 font-medium">Type</th>
+                  <th className="py-3.5 px-4 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {!order.customerRecentGenerations ||
+                order.customerRecentGenerations.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="py-6 px-4 text-center text-xs text-muted-foreground"
+                    >
+                      No recent AI generations recorded for this customer.
+                    </td>
+                  </tr>
+                ) : (
+                  order.customerRecentGenerations.map((gen) => (
+                    <tr
+                      key={gen.id}
+                      onClick={() =>
+                        router.push(`/dashboard/ai-generations/${gen.jobId}`)
+                      }
+                      className="hover:bg-secondary/20 transition-colors cursor-pointer group"
+                    >
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                        {gen.date}
+                      </td>
+                      <td className="py-3.5 px-4 font-medium text-foreground text-sm">
+                        {gen.template}
+                      </td>
+                      <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                        {gen.type}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        {gen.status === "Completed" ? (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
+                            Completed
+                          </span>
+                        ) : gen.status === "Processing" ? (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-amber-950/70 text-amber-400 border-amber-800/40">
+                            Processing
+                          </span>
+                        ) : gen.status === "Queued" ? (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-zinc-800/70 text-zinc-300 border-zinc-700/40">
+                            Queued
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-rose-950/70 text-rose-400 border-rose-800/40">
+                            Failed
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Customer's Recent Orders (Max 5 Latest) */}
+        <div className="pt-4 border-t border-border/60">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-normal text-muted-foreground block">
+                Customer&apos;s Other Recent Orders
+              </span>
+              <span className="text-xs text-muted-foreground">
+                (Latest {order.customerRecentOrders?.length || 0})
+              </span>
+            </div>
+            <Link
+              href={`/dashboard/orders?search=${encodeURIComponent(order.customer.email)}`}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline hover:text-primary/90 transition-colors"
+            >
+              <Package className="size-3 text-muted-foreground" />
+              <span>View All Order History</span>
+              <ArrowRight className="size-3" />
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
+                  <th className="py-3.5 px-4 font-medium">Order</th>
+                  <th className="py-3.5 px-4 font-medium">Items</th>
+                  <th className="py-3.5 px-4 font-medium">Total</th>
+                  <th className="py-3.5 px-4 font-medium">Payment</th>
+                  <th className="py-3.5 px-4 font-medium">Stage</th>
+                  <th className="py-3.5 px-4 font-medium">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {!order.customerRecentOrders ||
+                order.customerRecentOrders.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="py-6 px-4 text-center text-xs text-muted-foreground"
+                    >
+                      No other orders recorded for this customer.
+                    </td>
+                  </tr>
+                ) : (
+                  order.customerRecentOrders.map((ord) => {
+                    const isCurrent = ord.cleanId === order.cleanId;
+                    return (
+                      <tr
+                        key={ord.id}
+                        onClick={() =>
+                          router.push(`/dashboard/orders/${ord.cleanId}`)
+                        }
+                        className={`transition-colors cursor-pointer group ${
+                          isCurrent
+                            ? "bg-secondary/40 font-medium"
+                            : "hover:bg-secondary/20"
+                        }`}
+                      >
+                        <td className="py-3.5 px-4 font-semibold text-foreground group-hover:text-primary transition-colors text-sm">
+                          {ord.id}{" "}
+                          {isCurrent && (
+                            <span className="text-[10px] text-primary font-normal ml-1 border border-primary/40 bg-primary/10 px-1.5 py-0.2 rounded">
+                              Current
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 font-normal text-foreground text-sm">
+                          {ord.itemsCount}{" "}
+                          {ord.itemsCount === 1 ? "item" : "items"}
+                        </td>
+                        <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                          {ord.total}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getPaymentBadge(
+                              ord.payment,
+                            )}`}
+                          >
+                            {ord.payment}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getStageBadge(
+                              ord.stage,
+                            )}`}
+                          >
+                            {ord.stage}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                          {ord.date}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
 }

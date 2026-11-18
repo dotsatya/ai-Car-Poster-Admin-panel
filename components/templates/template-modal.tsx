@@ -453,8 +453,8 @@ export function TemplateModal({
                         onClick={() => handleToggleSize(size)}
                         className={`rounded-md px-3.5 py-1.5 text-xs font-medium transition-all cursor-pointer shadow-sm ${
                           isSelected
-                            ? "bg-blue-600 hover:bg-blue-500 text-white border border-blue-500"
-                            : "bg-card/60 hover:bg-secondary border border-border/80 text-foreground"
+                            ? "bg-primary text-primary-foreground border border-primary shadow-xs"
+                            : "bg-card/60 hover:bg-secondary border border-border/80 hover:border-primary/40 text-foreground"
                         }`}
                       >
                         {size}
@@ -545,7 +545,7 @@ export function TemplateModal({
                       <button
                         type="button"
                         onClick={() => masterFileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors cursor-pointer shadow-sm"
+                        className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
                       >
                         <Upload className="size-3.5" />
                         <span>Replace</span>
@@ -558,7 +558,7 @@ export function TemplateModal({
                           setMasterFileName("no-asset.png")
                         }}
                         title="Remove Master Asset"
-                        className="rounded-md border border-border/80 bg-card p-1.5 text-xs text-muted-foreground hover:text-rose-400 hover:border-rose-800 transition-colors cursor-pointer shadow-sm"
+                        className="rounded-md border border-border/80 bg-card p-1.5 text-xs text-muted-foreground hover:text-rose-400 hover:border-rose-900/60 transition-colors cursor-pointer shadow-sm"
                       >
                         <Trash2 className="size-4" />
                       </button>
@@ -617,7 +617,7 @@ export function TemplateModal({
                       <button
                         type="button"
                         onClick={() => thumbFileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors cursor-pointer shadow-sm"
+                        className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
                       >
                         <Upload className="size-3.5" />
                         <span>Replace</span>
@@ -630,7 +630,7 @@ export function TemplateModal({
                           setThumbFileName("no-thumb.webp")
                         }}
                         title="Remove Thumbnail"
-                        className="rounded-md border border-border/80 bg-card p-1.5 text-xs text-muted-foreground hover:text-rose-400 hover:border-rose-800 transition-colors cursor-pointer shadow-sm"
+                        className="rounded-md border border-border/80 bg-card p-1.5 text-xs text-muted-foreground hover:text-rose-400 hover:border-rose-900/60 transition-colors cursor-pointer shadow-sm"
                       >
                         <Trash2 className="size-4" />
                       </button>
@@ -664,7 +664,7 @@ export function TemplateModal({
                   <button
                     type="button"
                     onClick={handleArchiveClick}
-                    className="rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-border transition-colors cursor-pointer shadow-sm"
+                    className="rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
                   >
                     {status === "Archived" ? "Unarchive" : "Archive"}
                   </button>
@@ -672,14 +672,14 @@ export function TemplateModal({
                   <button
                     type="button"
                     onClick={handlePublishClick}
-                    className="rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-border transition-colors cursor-pointer shadow-sm"
+                    className="rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
                   >
                     {status === "Published" ? "Unpublish" : "Publish"}
                   </button>
 
                   <button
                     type="submit"
-                    className="rounded-md bg-white text-black hover:bg-zinc-200 px-4 py-2 text-sm font-semibold transition-colors cursor-pointer shadow-sm"
+                    className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors cursor-pointer"
                   >
                     Save Changes
                   </button>
@@ -689,14 +689,14 @@ export function TemplateModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-border transition-colors cursor-pointer shadow-sm"
+                    className="rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
                   >
                     Cancel
                   </button>
 
                   <button
                     type="submit"
-                    className="rounded-md bg-white text-black hover:bg-zinc-200 px-4 py-2 text-sm font-semibold transition-colors cursor-pointer shadow-sm"
+                    className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors cursor-pointer"
                   >
                     Create Template
                   </button>

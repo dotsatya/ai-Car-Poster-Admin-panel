@@ -169,8 +169,8 @@ export default function DashboardPage() {
       customer: "j.lee@mail.com",
       items: 3,
       total: "$96",
-      stage: "Received",
-      badgeClass: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+      stage: "Order Received",
+      badgeClass: "bg-zinc-800 text-zinc-300 border-zinc-700/60",
     },
   ]
 
@@ -179,10 +179,10 @@ export default function DashboardPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
             Dashboard
           </h1>
-          <p className="text-xs font-normal text-muted-foreground mt-0.5">
+          <p className="text-sm font-normal text-muted-foreground mt-1">
             Automotive atelier performance, generative render pipeline, and order fulfillment.
           </p>
         </div>
@@ -568,30 +568,30 @@ export default function DashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-border/40 text-xs font-medium text-muted-foreground uppercase tracking-[0.03em]">
-                <th className="pb-3 font-medium">Order</th>
-                <th className="pb-3 font-medium">Customer</th>
-                <th className="pb-3 font-medium">Items</th>
-                <th className="pb-3 font-medium">Total</th>
-                <th className="pb-3 font-medium">Stage</th>
+              <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
+                <th className="py-3.5 px-4 font-medium">Order</th>
+                <th className="py-3.5 px-4 font-medium">Customer</th>
+                <th className="py-3.5 px-4 font-medium">Items</th>
+                <th className="py-3.5 px-4 font-medium">Total</th>
+                <th className="py-3.5 px-4 font-medium">Stage</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/30">
+            <tbody className="divide-y divide-border/40">
               {recentOrders.map((ord) => (
                 <tr
                   key={ord.order}
                   onClick={() => router.push(`/dashboard/orders/${ord.order.replace("#", "")}`)}
                   className="hover:bg-secondary/40 transition-colors cursor-pointer group"
                 >
-                  <td className="py-3 font-medium text-foreground group-hover:text-primary transition-colors">
+                  <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors">
                     {ord.order}
                   </td>
-                  <td className="py-3 font-normal text-muted-foreground group-hover:text-foreground/90 transition-colors">
+                  <td className="py-3.5 px-4 font-normal text-muted-foreground group-hover:text-foreground/90 transition-colors">
                     {ord.customer}
                   </td>
-                  <td className="py-3 font-medium text-foreground">{ord.items}</td>
-                  <td className="py-3 font-semibold text-foreground">{ord.total}</td>
-                  <td className="py-3">
+                  <td className="py-3.5 px-4 font-medium text-foreground">{ord.items}</td>
+                  <td className="py-3.5 px-4 font-semibold text-foreground">{ord.total}</td>
+                  <td className="py-3.5 px-4">
                     <span
                       className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${ord.badgeClass}`}
                     >

@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Check, AlertCircle } from "lucide-react"
+import { ArrowLeft, Check, AlertCircle, Package, WandSparkles, ArrowRight, ArrowUpRight } from "lucide-react"
 import { DemoCustomer } from "@/lib/demoCustomer"
 
 interface CustomerDetailCardProps {
@@ -45,6 +45,16 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
     setTimeout(() => setFeedbackMsg(null), 3000)
   }
 
+  // Limit display to max 5 latest AI generations and 5 latest orders
+  const displayedGenerations = React.useMemo(
+    () => customer.generations.slice(0, 5),
+    [customer.generations]
+  )
+  const displayedOrders = React.useMemo(
+    () => customer.ordersList.slice(0, 5),
+    [customer.ordersList]
+  )
+
   // Payment badge styles
   const getPaymentBadge = (status: string) => {
     switch (status) {
@@ -62,18 +72,28 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
   // Stage badge styles
   const getStageBadge = (stage: string) => {
     switch (stage) {
-      case "Printing":
+      case "Order Received":
+      case "Received":
+        return "bg-zinc-800 text-zinc-300 border-zinc-700/60"
+      case "Order Confirmed":
+      case "Order confirmed and logged":
+        return "bg-violet-950/70 text-violet-400 border-violet-800/40"
+      case "Preparing Artwork":
       case "Painting":
+        return "bg-amber-950/70 text-amber-400 border-amber-800/40"
+      case "Printing":
         return "bg-blue-950/70 text-blue-400 border-blue-800/40"
+      case "Quality Check & Packing":
+      case "Packing":
+        return "bg-yellow-950/70 text-yellow-400 border-yellow-800/40"
       case "Shipped":
+        return "bg-cyan-950/70 text-cyan-400 border-cyan-800/40"
+      case "Out for Delivery":
+        return "bg-indigo-950/70 text-indigo-400 border-indigo-800/40"
       case "Delivered":
         return "bg-emerald-950/70 text-emerald-400 border-emerald-800/40"
-      case "Received":
-        return "bg-amber-950/70 text-amber-400 border-amber-800/40"
-      case "Packing":
-        return "bg-purple-950/70 text-purple-400 border-purple-800/40"
       default:
-        return null
+        return "bg-zinc-800 text-zinc-300 border-zinc-700/60"
     }
   }
 
@@ -93,30 +113,55 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
       {/* Main Customer Detail Card */}
       <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-6">
         {/* Top Header Row */}
-        <div className="flex items-center justify-between pb-2">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            {customer.email}
-          </h1>
-          <div className="flex items-center gap-2">
-            {customer.verified ? (
-              <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
-                Verified
-              </span>
-            ) : (
-              <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-zinc-800/70 text-zinc-400 border-zinc-700/40">
-                Unverified
-              </span>
-            )}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 gap-3 border-b border-border/60">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              {customer.email}
+            </h1>
+            <div className="flex items-center gap-2">
+              {customer.verified ? (
+                <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
+                  Verified
+                </span>
+              ) : (
+                <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-zinc-800/70 text-zinc-400 border-zinc-700/40">
+                  Unverified
+                </span>
+              )}
 
-            {accountStatus === "Active" ? (
-              <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
-                Active
-              </span>
-            ) : (
-              <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-rose-950/70 text-rose-400 border-rose-800/40">
-                Disabled
-              </span>
-            )}
+              {accountStatus === "Active" ? (
+                <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
+                  Active
+                </span>
+              ) : (
+                <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-rose-950/70 text-rose-400 border-rose-800/40">
+                  Disabled
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Quick Navigation Links */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/dashboard/orders?search=${encodeURIComponent(customer.email)}`}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-secondary/60 hover:bg-secondary text-foreground text-xs font-medium px-3 py-1.5 transition-colors shadow-sm"
+              title="View all orders for this customer"
+            >
+              <Package className="size-3.5 text-muted-foreground" />
+              <span>View All Order History</span>
+              <ArrowUpRight className="size-3 text-muted-foreground/80" />
+            </Link>
+
+            <Link
+              href={`/dashboard/ai-generations?search=${encodeURIComponent(customer.email)}`}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-secondary/60 hover:bg-secondary text-foreground text-xs font-medium px-3 py-1.5 transition-colors shadow-sm"
+              title="View all AI generations for this customer"
+            >
+              <WandSparkles className="size-3.5 text-muted-foreground" />
+              <span>View All Generations</span>
+              <ArrowUpRight className="size-3 text-muted-foreground/80" />
+            </Link>
           </div>
         </div>
 
@@ -189,31 +234,45 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
           </div>
         </div>
 
-        {/* Recent generations Section */}
+        {/* Recent generations Section (Max 5 Latest) */}
         <div className="pt-2">
-          <span className="text-xs font-normal text-muted-foreground block mb-2">
-            Recent generations
-          </span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-normal text-muted-foreground block">
+                Recent generations
+              </span>
+              <span className="text-xs text-muted-foreground">
+                (Latest {displayedGenerations.length} of {customer.generations.length})
+              </span>
+            </div>
+            <Link
+              href={`/dashboard/ai-generations?search=${encodeURIComponent(customer.email)}`}
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline hover:text-primary/90 transition-colors"
+            >
+              <span>View All Generations</span>
+              <ArrowRight className="size-3" />
+            </Link>
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-border/40 text-xs font-normal text-muted-foreground">
-                  <th className="pb-2.5 font-normal">Date</th>
-                  <th className="pb-2.5 font-normal">Templates</th>
-                  <th className="pb-2.5 font-normal">Type</th>
-                  <th className="pb-2.5 font-normal">Status</th>
+                <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
+                  <th className="py-3.5 px-4 font-medium">Date</th>
+                  <th className="py-3.5 px-4 font-medium">Templates</th>
+                  <th className="py-3.5 px-4 font-medium">Type</th>
+                  <th className="py-3.5 px-4 font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/30">
-                {customer.generations.length === 0 ? (
+              <tbody className="divide-y divide-border/40">
+                {displayedGenerations.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="py-6 text-center text-xs text-muted-foreground">
+                    <td colSpan={4} className="py-6 px-4 text-center text-xs text-muted-foreground">
                       No generations recorded yet.
                     </td>
                   </tr>
                 ) : (
-                  customer.generations.map((gen) => (
+                  displayedGenerations.map((gen) => (
                     <tr
                       key={gen.id}
                       onClick={() => {
@@ -227,19 +286,27 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                           : "hover:bg-secondary/20"
                       }`}
                     >
-                      <td className="py-3.5 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
                         {gen.date}
                       </td>
-                      <td className="py-3.5 font-medium text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-medium text-foreground text-sm">
                         {gen.template}
                       </td>
-                      <td className="py-3.5 font-normal text-muted-foreground text-sm">
+                      <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
                         {gen.type}
                       </td>
-                      <td className="py-3.5">
+                      <td className="py-3.5 px-4">
                         {gen.status === "Completed" ? (
                           <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
                             Completed
+                          </span>
+                        ) : gen.status === "Processing" ? (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-amber-950/70 text-amber-400 border-amber-800/40">
+                            Processing
+                          </span>
+                        ) : gen.status === "Queued" ? (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-zinc-800/70 text-zinc-300 border-zinc-700/40">
+                            Queued
                           </span>
                         ) : (
                           <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-rose-950/70 text-rose-400 border-rose-800/40">
@@ -255,38 +322,47 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
           </div>
         </div>
 
-        {/* Order history Section (Requested after Recent generations) */}
+        {/* Order history Section (Max 5 Latest) */}
         <div className="pt-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-normal text-muted-foreground block">
-              Order history
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {customer.ordersList.length} {customer.ordersList.length === 1 ? "order" : "orders"}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-normal text-muted-foreground block">
+                Order history
+              </span>
+              <span className="text-xs text-muted-foreground">
+                (Latest {displayedOrders.length} of {customer.ordersList.length} {customer.ordersList.length === 1 ? "order" : "orders"})
+              </span>
+            </div>
+            <Link
+              href={`/dashboard/orders?search=${encodeURIComponent(customer.email)}`}
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline hover:text-primary/90 transition-colors"
+            >
+              <span>View All Order History</span>
+              <ArrowRight className="size-3" />
+            </Link>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-border/40 text-xs font-normal text-muted-foreground">
-                  <th className="pb-2.5 font-normal">Order</th>
-                  <th className="pb-2.5 font-normal">Items</th>
-                  <th className="pb-2.5 font-normal">Total</th>
-                  <th className="pb-2.5 font-normal">Payment</th>
-                  <th className="pb-2.5 font-normal">Stage</th>
-                  <th className="pb-2.5 font-normal">Date</th>
+                <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
+                  <th className="py-3.5 px-4 font-medium">Order</th>
+                  <th className="py-3.5 px-4 font-medium">Items</th>
+                  <th className="py-3.5 px-4 font-medium">Total</th>
+                  <th className="py-3.5 px-4 font-medium">Payment</th>
+                  <th className="py-3.5 px-4 font-medium">Stage</th>
+                  <th className="py-3.5 px-4 font-medium">Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/30">
-                {customer.ordersList.length === 0 ? (
+              <tbody className="divide-y divide-border/40">
+                {displayedOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-6 text-center text-xs text-muted-foreground">
+                    <td colSpan={6} className="py-6 px-4 text-center text-xs text-muted-foreground">
                       No order history recorded for this customer.
                     </td>
                   </tr>
                 ) : (
-                  customer.ordersList.map((ord) => {
+                  displayedOrders.map((ord) => {
                     const stageBadge = getStageBadge(ord.stage)
                     return (
                       <tr
@@ -294,16 +370,16 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                         onClick={() => router.push(`/dashboard/orders/${ord.cleanId}`)}
                         className="hover:bg-secondary/20 transition-colors cursor-pointer group"
                       >
-                        <td className="py-3.5 font-semibold text-foreground group-hover:text-primary transition-colors text-sm">
+                        <td className="py-3.5 px-4 font-semibold text-foreground group-hover:text-primary transition-colors text-sm">
                           {ord.id}
                         </td>
-                        <td className="py-3.5 font-normal text-foreground text-sm">
+                        <td className="py-3.5 px-4 font-normal text-foreground text-sm">
                           {ord.itemsCount} {ord.itemsCount === 1 ? "item" : "items"}
                         </td>
-                        <td className="py-3.5 font-semibold text-foreground text-sm">
+                        <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
                           {ord.total}
                         </td>
-                        <td className="py-3.5">
+                        <td className="py-3.5 px-4">
                           <span
                             className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getPaymentBadge(
                               ord.payment
@@ -312,7 +388,7 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                             {ord.payment}
                           </span>
                         </td>
-                        <td className="py-3.5">
+                        <td className="py-3.5 px-4">
                           {stageBadge ? (
                             <span
                               className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${stageBadge}`}
@@ -325,7 +401,7 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                             </span>
                           )}
                         </td>
-                        <td className="py-3.5 font-normal text-muted-foreground text-sm">
+                        <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
                           {ord.date}
                         </td>
                       </tr>
@@ -364,10 +440,10 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
               <div className="flex items-center gap-3">
                 <button
                   type="submit"
-                  className={`rounded-md border px-4 py-1.5 text-sm font-medium transition-colors cursor-pointer shadow-sm ${
+                  className={`rounded-md border px-3.5 py-2 text-sm font-medium transition-colors cursor-pointer shadow-sm ${
                     accountStatus === "Active"
-                      ? "border-rose-900/60 bg-rose-950/20 text-rose-400 hover:bg-rose-950/50"
-                      : "border-emerald-900/60 bg-emerald-950/20 text-emerald-400 hover:bg-emerald-950/50"
+                      ? "border-rose-900/60 bg-rose-950/40 text-rose-400 hover:bg-rose-900/50 hover:text-rose-300"
+                      : "border-emerald-800/60 bg-emerald-950/40 text-emerald-400 hover:bg-emerald-900/50 hover:text-emerald-300"
                   }`}
                 >
                   {accountStatus === "Active" ? "Disable account" : "Enable account"}

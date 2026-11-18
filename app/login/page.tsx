@@ -132,7 +132,7 @@ export default function LoginPage() {
               </label>
               <button
                 type="button"
-                className="text-xs font-normal text-muted-foreground hover:text-foreground hover:underline transition-colors"
+                className="text-xs font-normal text-muted-foreground hover:text-foreground hover:underline transition-colors cursor-pointer"
                 onClick={() => alert("Password recovery link sent to admin1@gmail.com")}
               >
                 Forgot your password?

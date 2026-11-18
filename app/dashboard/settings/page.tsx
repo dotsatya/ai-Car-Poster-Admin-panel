@@ -1,6 +1,35 @@
-import { User, Bell, Lock, Save } from "lucide-react"
+"use client"
+
+import * as React from "react"
+import { useAuth } from "@/context/auth-context"
+import { User, Bell, Lock, Save, CheckCircle2 } from "lucide-react"
 
 export default function AccountSettingsPage() {
+  const { user, updateUser } = useAuth()
+  const [name, setName] = React.useState(user?.name || "Alexander Drake")
+  const [email, setEmail] = React.useState(user?.email || "admin1@gmail.com")
+  const [saved, setSaved] = React.useState(false)
+
+  React.useEffect(() => {
+    if (user) {
+      if (user.name && user.name !== "Poster Gen Admin") {
+        setName(user.name)
+      } else {
+        setName("Alexander Drake")
+      }
+      setEmail(user.email || "admin1@gmail.com")
+    }
+  }, [user])
+
+  const handleSave = () => {
+    updateUser({
+      name: name.trim() || "Alexander Drake",
+      email: email.trim() || "admin1@gmail.com",
+    })
+    setSaved(true)
+    setTimeout(() => setSaved(false), 3500)
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -12,10 +41,21 @@ export default function AccountSettingsPage() {
             Manage your administrator profile, authentication credentials, and notifications.
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors cursor-pointer"
+        >
           <Save className="size-4" /> Save Preferences
         </button>
       </div>
+
+      {saved && (
+        <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400 flex items-center gap-2">
+          <CheckCircle2 className="size-4 shrink-0" />
+          <span>Preferences and user profile saved successfully.</span>
+        </div>
+      )}
 
       <div className="grid gap-6 w-full">
         <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-4">
@@ -23,19 +63,23 @@ export default function AccountSettingsPage() {
             <User className="size-4 text-primary" />
             <h3 className="font-semibold text-base text-foreground">Profile Information</h3>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2 pt-1">
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-[0.03em]">Full Name</label>
+              <label className="text-xs text-muted-foreground block mb-1.5 font-normal">Full Name</label>
               <input
-                defaultValue="Alexander Drake"
-                className="mt-1.5 w-full rounded-md border border-border/80 bg-background/80 px-3.5 py-2 text-sm font-normal text-foreground outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/40 transition-colors"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-[0.03em]">Email Address</label>
+              <label className="text-xs text-muted-foreground block mb-1.5 font-normal">Email Address</label>
               <input
-                defaultValue="admin1@gmail.com"
-                className="mt-1.5 w-full rounded-md border border-border/80 bg-background/80 px-3.5 py-2 text-sm font-normal text-foreground outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/40 transition-colors"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
               />
             </div>
           </div>
@@ -46,21 +90,21 @@ export default function AccountSettingsPage() {
             <Lock className="size-4 text-primary" />
             <h3 className="font-semibold text-base text-foreground">Credentials & Two-Factor</h3>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2 pt-1">
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-[0.03em]">Current Password</label>
+              <label className="text-xs text-muted-foreground block mb-1.5 font-normal">Current Password</label>
               <input
                 type="password"
                 placeholder="••••••••••••"
-                className="mt-1.5 w-full rounded-md border border-border/80 bg-background/80 px-3.5 py-2 text-sm font-normal text-foreground outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/40 transition-colors"
+                className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-[0.03em]">New Password</label>
+              <label className="text-xs text-muted-foreground block mb-1.5 font-normal">New Password</label>
               <input
                 type="password"
                 placeholder="••••••••••••"
-                className="mt-1.5 w-full rounded-md border border-border/80 bg-background/80 px-3.5 py-2 text-sm font-normal text-foreground outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/40 transition-colors"
+                className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
               />
             </div>
           </div>

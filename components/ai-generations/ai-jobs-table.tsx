@@ -42,23 +42,23 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
   }
 
   return (
-    <div className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm">
+    <div className="rounded-md border border-border/80 bg-card overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-border/40 text-xs font-medium text-muted-foreground">
-              <th className="pb-3.5 font-medium">Job</th>
-              <th className="pb-3.5 font-medium">Customer</th>
-              <th className="pb-3.5 font-medium">Template(s)</th>
-              <th className="pb-3.5 font-medium">Type</th>
-              <th className="pb-3.5 font-medium">State</th>
-              <th className="pb-3.5 font-medium">Time</th>
+            <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
+              <th className="py-3.5 px-4 font-medium">Job</th>
+              <th className="py-3.5 px-4 font-medium">Customer</th>
+              <th className="py-3.5 px-4 font-medium">Template(s)</th>
+              <th className="py-3.5 px-4 font-medium">Type</th>
+              <th className="py-3.5 px-4 font-medium">State</th>
+              <th className="py-3.5 px-4 font-medium">Time</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/30">
+          <tbody className="divide-y divide-border/40">
             {paginatedJobs.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-xs text-muted-foreground">
+                <td colSpan={6} className="py-8 px-4 text-center text-xs text-muted-foreground">
                   No generation jobs match your current filters.
                 </td>
               </tr>
@@ -70,22 +70,22 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
                   className="hover:bg-secondary/40 transition-colors cursor-pointer"
                 >
                   {/* Job ID */}
-                  <td className="py-3.5 font-semibold text-foreground text-sm">
+                  <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
                     {job.id}
                   </td>
 
                   {/* Customer */}
-                  <td className="py-3.5 font-normal text-muted-foreground text-sm">
+                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
                     {job.customer}
                   </td>
 
                   {/* Template(s) */}
-                  <td className="py-3.5 font-medium text-foreground text-sm">
+                  <td className="py-3.5 px-4 font-medium text-foreground text-sm">
                     {job.templates}
                   </td>
 
                   {/* Type */}
-                  <td className="py-3.5">
+                  <td className="py-3.5 px-4">
                     {job.type === "Combined" ? (
                       <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-blue-950/80 text-blue-400 border-blue-800/40">
                         Combined
@@ -98,7 +98,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
                   </td>
 
                   {/* State */}
-                  <td className="py-3.5">
+                  <td className="py-3.5 px-4">
                     <span
                       className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getStateBadge(
                         job.state
@@ -109,7 +109,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
                   </td>
 
                   {/* Time */}
-                  <td className="py-3.5 font-normal text-muted-foreground text-sm">
+                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
                     {job.time}
                   </td>
                 </tr>
@@ -120,7 +120,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
       </div>
 
       {/* Footer / Pagination matching mockup: Showing 1 to X of 2,796 • Previous · 1 · 2 · 3 · Next */}
-      <div className="mt-5 pt-4 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+      <div className="p-4 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground bg-card">
         <span>
           Showing {jobs.length === 0 ? 0 : startIndex + 1} to {endIndex} of{" "}
           {totalJobsCount.toLocaleString("en-US")}
@@ -131,7 +131,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
             type="button"
             disabled={validPage <= 1}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            className="px-2 py-1 rounded-md hover:text-foreground hover:bg-secondary/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="px-2.5 py-1 rounded-md text-xs font-medium hover:text-foreground hover:bg-secondary/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
             Previous
           </button>
@@ -143,7 +143,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
                 <button
                   type="button"
                   onClick={() => setCurrentPage(pageNum)}
-                  className={`px-2 py-0.5 rounded-md hover:text-foreground hover:bg-secondary/60 transition-colors cursor-pointer ${
+                  className={`px-2 py-0.5 rounded-md text-xs font-medium hover:text-foreground hover:bg-secondary/60 transition-colors cursor-pointer ${
                     validPage === pageNum
                       ? "font-semibold text-foreground underline underline-offset-4"
                       : "text-muted-foreground"
@@ -159,7 +159,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
             type="button"
             disabled={validPage >= totalPages}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            className="px-2 py-1 rounded-md hover:text-foreground hover:bg-secondary/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="px-2.5 py-1 rounded-md text-xs font-medium hover:text-foreground hover:bg-secondary/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
             Next
           </button>

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
+import { Edit2 } from "lucide-react"
 import { TemplatePhoto } from "@/lib/templatePhotos"
 
 interface TemplateCardProps {
@@ -42,12 +43,6 @@ export function TemplateCard({ template, onSelect, onEdit }: TemplateCardProps) 
             ) : template.status === "Archived" ? (
               <span className="inline-flex items-center gap-1 rounded-md bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400">
                 Archived
-              </span>
-            ) : null}
-
-            {template.tag ? (
-              <span className="inline-flex items-center gap-1 rounded-md bg-primary/20 backdrop-blur-md border border-primary/40 px-2 py-0.5 text-[10px] font-medium text-primary">
-                {template.tag}
               </span>
             ) : null}
           </div>
@@ -97,19 +92,17 @@ export function TemplateCard({ template, onSelect, onEdit }: TemplateCardProps) 
         </div>
 
         {/* Footer Actions: Edit button */}
-        <div className="flex items-center justify-between pt-3 mt-3 border-t border-border/40 text-xs">
-          <span className="text-muted-foreground text-[11px] font-normal">
-            {template.availableGsm?.length || 3} Paper Finishes
-          </span>
+        <div className="flex items-center justify-end pt-3 mt-3 border-t border-border/40 text-xs">
           <button
             type="button"
             onClick={() => {
               onEdit?.(template)
               onSelect?.(template)
             }}
-            className="rounded-md bg-secondary text-foreground hover:bg-primary/20 hover:text-primary hover:border-primary/40 border border-border/60 px-3 py-1 text-xs font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-secondary/60 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3 py-1.5 transition-colors cursor-pointer shadow-sm"
           >
-            Edit
+            <Edit2 className="size-3 text-muted-foreground" />
+            <span>Edit</span>
           </button>
         </div>
       </div>

@@ -37,6 +37,8 @@ export function DashboardHeader() {
     current = { section: "Operations", title: "Job Details" }
   } else if (!current && pathname?.startsWith("/dashboard/staff/")) {
     current = { section: "Management", title: "Staff Member" }
+  } else if (!current && pathname?.startsWith("/dashboard/production/")) {
+    current = { section: "Operations", title: "Production Order" }
   }
   if (!current) {
     current = { section: "Overview", title: "Dashboard" }

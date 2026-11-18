@@ -1,9 +1,26 @@
-import { TEMPLATE_PHOTOS } from "@/lib/templatePhotos"
+import {
+  ORDERS,
+  CUSTOMERS,
+  DATA_AS_OF,
+  DISPLAY_TIME_ZONE,
+  formatDateTime,
+  formatMoney,
+  getOrderStage,
+  getProductionByOrderId,
+  getGenerationsByEmail,
+  getOrdersByEmail,
+  type JobType,
+  type PaymentStatus,
+  type ProductionStage,
+} from "./DemoData"
+
+// Adapter: same exports and shape as the old file, but all data comes from DemoData.ts.
+// Do not add data here. Edit DemoData.ts instead.
 
 export interface OrderItem {
   id: string
   name: string
-  type: "Individual" | "Combined"
+  type: JobType
   size: string
   qty: number
   unitPrice: string
@@ -15,6 +32,27 @@ export interface StatusHistoryItem {
   time: string
   label: string
 }
+
+export interface CustomerRecentGeneration {
+  id: string
+  jobId: string
+  date: string
+  template: string
+  type: JobType
+  status: string
+}
+
+export interface CustomerRecentOrder {
+  id: string
+  cleanId: string
+  itemsCount: number
+  total: string
+  payment: PaymentStatus
+  stage: OrderStage
+  date: string
+}
+
+export type OrderStage = ProductionStage
 
 export interface DemoOrder {
   id: string
@@ -30,11 +68,11 @@ export interface DemoOrder {
     country: string
   }
   payment: {
-    status: "Paid" | "Pending" | "Refunded" | "Cancelled"
+    status: PaymentStatus
     stripeRef: string
     stripeUrl?: string
   }
-  stage: "Printing" | "Painting" | "Packing" | "Shipped" | "Delivered" | "Received" | "None"
+  stage: OrderStage
   items: OrderItem[]
   subtotal: string
   shippingFee: string
@@ -44,1117 +82,119 @@ export interface DemoOrder {
   daysAgo: number
   statusHistory: StatusHistoryItem[]
   notes: string[]
+  customerRecentGenerations: CustomerRecentGeneration[]
+  customerRecentOrders: CustomerRecentOrder[]
 }
 
-// 22 Realistic US-Based Demo Orders leveraging real template poster photos from TEMPLATE_PHOTOS
-export const DEMO_ORDERS: DemoOrder[] = [
-  {
-    id: "#1042",
-    cleanId: "1042",
+const shortDate = (iso: string) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: DISPLAY_TIME_ZONE,
+  }).format(new Date(iso))
+
+const calcDaysAgo = (iso: string) => {
+  const asOf = new Date(DATA_AS_OF).getTime()
+  const created = new Date(iso).getTime()
+  return Math.max(0, Math.floor((asOf - created) / (1000 * 60 * 60 * 24)))
+}
+
+export const DEMO_ORDERS: DemoOrder[] = [...ORDERS].reverse().map((o) => {
+  const customer = CUSTOMERS.find(
+    (c) => c.email.toLowerCase() === o.customerEmail.toLowerCase()
+  )
+  const prod = getProductionByOrderId(o.id)
+
+  const items: OrderItem[] = o.items.map((it) => ({
+    id: it.id,
+    name: it.name,
+    type: it.type,
+    size: it.size,
+    qty: it.qty,
+    unitPrice: formatMoney(it.unitPrice),
+    lineTotal: formatMoney(it.lineTotal),
+    image: it.image,
+  }))
+
+  const statusHistory: StatusHistoryItem[] = prod
+    ? prod.history.map((h) => ({
+        time: formatDateTime(h.time),
+        label: h.label,
+      }))
+    : [
+        {
+          time: formatDateTime(o.createdAt),
+          label: "Order Received",
+        },
+      ]
+
+  const line2Part = o.shipping.line2 ? `, ${o.shipping.line2}` : ""
+
+  const customerRecentGenerations: CustomerRecentGeneration[] = [
+    ...getGenerationsByEmail(o.customerEmail),
+  ]
+    .reverse()
+    .slice(0, 5)
+    .map((g) => ({
+      id: g.cleanId,
+      jobId: g.cleanId,
+      date: shortDate(g.createdAt),
+      template: g.template,
+      type: g.type,
+      status: g.state,
+    }))
+
+  const customerRecentOrders: CustomerRecentOrder[] = [
+    ...getOrdersByEmail(o.customerEmail),
+  ]
+    .reverse()
+    .slice(0, 5)
+    .map((ord) => ({
+      id: ord.id,
+      cleanId: ord.cleanId,
+      itemsCount: ord.items.reduce((n, i) => n + i.qty, 0),
+      total: formatMoney(ord.total),
+      payment: ord.payment.status,
+      stage: (getOrderStage(ord.id) as OrderStage) || "Order Received",
+      date: shortDate(ord.createdAt),
+    }))
+
+  return {
+    id: o.id,
+    cleanId: o.cleanId,
     customer: {
-      name: "Ayaan Khan",
-      email: "a.khan@mail.com",
-      phone: "+91 98xxx xxxxx",
+      name: customer?.name || o.shipping.name,
+      email: o.customerEmail,
+      phone: customer?.phone || "",
     },
     shipping: {
-      address: "12 Park Street, Kolkata",
-      cityStateZip: "West Bengal 700016",
-      country: "India",
+      address: `${o.shipping.line1}${line2Part}`,
+      cityStateZip: `${o.shipping.city}, ${o.shipping.state} ${o.shipping.zip}`,
+      country: o.shipping.country,
     },
     payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q...x9",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Printing",
-    items: [
-      {
-        id: "art-1042-1",
-        name: "Retro Racer",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$32.00",
-        lineTotal: "$32.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 1)?.src || "/template photo/1.webp",
-      },
-      {
-        id: "art-1042-2",
-        name: "Neon Night",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 2,
-        unitPrice: "$22.00",
-        lineTotal: "$44.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 4)?.src || "/template photo/4.webp",
-      },
-      {
-        id: "art-1042-3",
-        name: "Retro Racer + Neon Night",
-        type: "Combined",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$20.00",
-        lineTotal: "$20.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 13)?.src || "/template photo/13.webp",
-      },
-    ],
-    subtotal: "$96.00",
-    shippingFee: "$0.00",
-    total: "$96.00",
-    numericTotal: 96.0,
-    date: "17 Nov",
-    daysAgo: 1,
-    statusHistory: [
-      { time: "17 Nov, 10:42", label: "Order received" },
-      { time: "17 Nov, 11:05", label: "Preparing artwork" },
-      { time: "17 Nov, 14:20", label: "Printing" },
-    ],
-    notes: ["Standard museum tube packaging."],
-  },
-  {
-    id: "#1041",
-    cleanId: "1041",
-    customer: {
-      name: "Sarah Roy",
-      email: "s.roy@mail.com",
-      phone: "+1 (310) 555-0144",
-    },
-    shipping: {
-      address: "1045 Ocean Avenue, Suite 300",
-      cityStateZip: "Santa Monica, CA 90401",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q883719283711a2",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Shipped",
-    items: [
-      {
-        id: "art-1041-1",
-        name: "Porsche 911 British Racing Green",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$29.00",
-        lineTotal: "$29.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 2)?.src || "/template photo/2.webp",
-      },
-    ],
-    subtotal: "$29.00",
-    shippingFee: "$0.00",
-    total: "$29.00",
-    numericTotal: 29.0,
-    date: "16 Nov",
-    daysAgo: 2,
-    statusHistory: [
-      { time: "16 Nov, 09:14", label: "Order received" },
-      { time: "16 Nov, 12:30", label: "Artwork approved" },
-      { time: "16 Nov, 16:45", label: "Shipped via FedEx Express #FX-984210" },
-    ],
-    notes: ["Tracking provided to customer via email."],
-  },
-  {
-    id: "#1040",
-    cleanId: "1040",
-    customer: {
-      name: "Jessica Lee",
-      email: "j.lee@mail.com",
-      phone: "+1 (415) 555-0192",
-    },
-    shipping: {
-      address: "742 Evergreen Terrace",
-      cityStateZip: "San Francisco, CA 94107",
-      country: "United States",
-    },
-    payment: {
-      status: "Pending",
-      stripeRef: "pi_3Q992019482910f7",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "None",
-    items: [
-      {
-        id: "art-1040-1",
-        name: "Aventador SVJ Crimson Storm",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$38.00",
-        lineTotal: "$38.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 8)?.src || "/template photo/8.webp",
-      },
-      {
-        id: "art-1040-2",
-        name: "Pagani Zonda Obsidian Noir",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$30.00",
-        lineTotal: "$30.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 6)?.src || "/template photo/6.webp",
-      },
-    ],
-    subtotal: "$68.00",
-    shippingFee: "$0.00",
-    total: "$68.00",
-    numericTotal: 68.0,
-    date: "16 Nov",
-    daysAgo: 2,
-    statusHistory: [
-      { time: "16 Nov, 18:20", label: "Order initiated" },
-      { time: "16 Nov, 18:22", label: "Awaiting bank authorization" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1039",
-    cleanId: "1039",
-    customer: {
-      name: "Marcus Das",
-      email: "m.das@mail.com",
-      phone: "+1 (312) 555-0167",
-    },
-    shipping: {
-      address: "880 North Michigan Avenue, Unit 19B",
-      cityStateZip: "Chicago, IL 60611",
-      country: "United States",
-    },
-    payment: {
-      status: "Refunded",
-      stripeRef: "pi_3Q771928371920r4",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Received",
-    items: [
-      {
-        id: "art-1039-1",
-        name: "Bugatti Chiron Super Sport 300+",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$35.00",
-        lineTotal: "$35.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 10)?.src || "/template photo/10.webp",
-      },
-    ],
-    subtotal: "$35.00",
-    shippingFee: "$0.00",
-    total: "$35.00",
-    numericTotal: 35.0,
-    date: "15 Nov",
-    daysAgo: 3,
-    statusHistory: [
-      { time: "15 Nov, 11:10", label: "Order received" },
-      { time: "15 Nov, 14:00", label: "Customer requested cancellation" },
-      { time: "15 Nov, 14:30", label: "Refund issued via Stripe" },
-    ],
-    notes: ["Customer ordered incorrect size, requested refund to reorder."],
-  },
-  {
-    id: "#1038",
-    cleanId: "1038",
-    customer: {
-      name: "Liam Vance",
-      email: "k.vance@mail.com",
-      phone: "+1 (512) 555-0188",
-    },
-    shipping: {
-      address: "1100 Congress Avenue, Suite 400",
-      cityStateZip: "Austin, TX 78701",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q662819283711m5",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Packing",
-    items: [
-      {
-        id: "art-1038-1",
-        name: "Ferrari F40 Atrium Spec",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$44.00",
-        lineTotal: "$44.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 11)?.src || "/template photo/11.webp",
-      },
-      {
-        id: "art-1038-2",
-        name: "Porsche Carrera GT Spec Sheet",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$35.00",
-        lineTotal: "$35.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 12)?.src || "/template photo/12.webp",
-      },
-    ],
-    subtotal: "$79.00",
-    shippingFee: "$0.00",
-    total: "$79.00",
-    numericTotal: 79.0,
-    date: "14 Nov",
-    daysAgo: 4,
-    statusHistory: [
-      { time: "14 Nov, 08:30", label: "Order received" },
-      { time: "14 Nov, 11:15", label: "Printed on 300 GSM Cotton Rag" },
-      { time: "14 Nov, 16:00", label: "Quality inspected & packing" },
-    ],
-    notes: ["Fragile archival packaging requested."],
-  },
-  {
-    id: "#1037",
-    cleanId: "1037",
-    customer: {
-      name: "Tara Ross",
-      email: "t.ross@mail.com",
-      phone: "+1 (305) 555-0133",
-    },
-    shipping: {
-      address: "350 South Miami Avenue, Tower 2",
-      cityStateZip: "Miami, FL 33130",
-      country: "United States",
-    },
-    payment: {
-      status: "Cancelled",
-      stripeRef: "pi_3Q551902837191k1",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "None",
-    items: [
-      {
-        id: "art-1037-1",
-        name: "Koenigsegg Jesko Absolut Red Studio",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$45.00",
-        lineTotal: "$45.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 18)?.src || "/template photo/18.webp",
-      },
-    ],
-    subtotal: "$45.00",
-    shippingFee: "$0.00",
-    total: "$45.00",
-    numericTotal: 45.0,
-    date: "13 Nov",
-    daysAgo: 5,
-    statusHistory: [
-      { time: "13 Nov, 15:20", label: "Order created" },
-      { time: "13 Nov, 15:45", label: "Cancelled by buyer" },
-    ],
-    notes: ["Buyer changed mind prior to production."],
-  },
-  {
-    id: "#1036",
-    cleanId: "1036",
-    customer: {
-      name: "Christian Martin",
-      email: "c.martin@mail.com",
-      phone: "+1 (206) 555-0176",
-    },
-    shipping: {
-      address: "1600 Pike Place, Suite 800",
-      cityStateZip: "Seattle, WA 98101",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q441928371900p2",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Delivered",
-    items: [
-      {
-        id: "art-1036-1",
-        name: "Shelby GT350 Heritage Racing Stripe",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 2,
-        unitPrice: "$36.00",
-        lineTotal: "$72.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 5)?.src || "/template photo/5.webp",
-      },
-      {
-        id: "art-1036-2",
-        name: "McLaren 720S Speed Graphic",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 2,
-        unitPrice: "$35.00",
-        lineTotal: "$70.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 28)?.src || "/template photo/28.webp",
-      },
-    ],
-    subtotal: "$142.00",
-    shippingFee: "$0.00",
-    total: "$142.00",
-    numericTotal: 142.0,
-    date: "12 Nov",
-    daysAgo: 6,
-    statusHistory: [
-      { time: "12 Nov, 10:15", label: "Order received" },
-      { time: "12 Nov, 13:40", label: "Printed & QA verified" },
-      { time: "13 Nov, 08:30", label: "Dispatched via UPS 2nd Day Air" },
-      { time: "15 Nov, 14:22", label: "Delivered - Front Porch" },
-    ],
-    notes: ["Signed delivery verified."],
-  },
-  {
-    id: "#1035",
-    cleanId: "1035",
-    customer: {
-      name: "Ethan Drake",
-      email: "e.drake@mail.com",
-      phone: "+1 (617) 555-0155",
-    },
-    shipping: {
-      address: "210 Newbury Street, 3rd Floor",
-      cityStateZip: "Boston, MA 02116",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q331902837190q8",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Delivered",
-    items: [
-      {
-        id: "art-1035-1",
-        name: "BMW M4 G82 Apex Edition",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$39.00",
-        lineTotal: "$39.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 23)?.src || "/template photo/23.webp",
-      },
-    ],
-    subtotal: "$39.00",
-    shippingFee: "$0.00",
-    total: "$39.00",
-    numericTotal: 39.0,
-    date: "11 Nov",
-    daysAgo: 7,
-    statusHistory: [
-      { time: "11 Nov, 14:05", label: "Order received" },
-      { time: "12 Nov, 10:15", label: "Printed on Heavy Matte" },
-      { time: "12 Nov, 15:30", label: "Shipped via USPS Priority" },
-      { time: "14 Nov, 11:45", label: "Delivered - Mailbox" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1034",
-    cleanId: "1034",
-    customer: {
-      name: "Olivia Brooks",
-      email: "o.brooks@mail.com",
-      phone: "+1 (303) 555-0182",
-    },
-    shipping: {
-      address: "1420 17th Street, Suite 500",
-      cityStateZip: "Denver, CO 80202",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q221809283719w4",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Painting",
-    items: [
-      {
-        id: "art-1034-1",
-        name: "Porsche 992 GT3 RS Modern Minimalist",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$36.00",
-        lineTotal: "$36.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 7)?.src || "/template photo/7.webp",
-      },
-      {
-        id: "art-1034-2",
-        name: "Toyota Supra MK5 Sunburst",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$28.00",
-        lineTotal: "$28.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 14)?.src || "/template photo/14.webp",
-      },
-    ],
-    subtotal: "$64.00",
-    shippingFee: "$0.00",
-    total: "$64.00",
-    numericTotal: 64.0,
-    date: "10 Nov",
-    daysAgo: 8,
-    statusHistory: [
-      { time: "10 Nov, 09:30", label: "Order received" },
-      { time: "10 Nov, 11:20", label: "Digital master proof created" },
-      { time: "11 Nov, 09:00", label: "Painting & pigment application" },
-    ],
-    notes: ["Special custom contrast calibration."],
-  },
-  {
-    id: "#1033",
-    cleanId: "1033",
-    customer: {
-      name: "Marcus Sterling",
-      email: "m.sterling@mail.com",
-      phone: "+1 (214) 555-0129",
-    },
-    shipping: {
-      address: "2100 Ross Avenue, Suite 1600",
-      cityStateZip: "Dallas, TX 75201",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q110928371928z3",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Shipped",
-    items: [
-      {
-        id: "art-1033-1",
-        name: "Toyota Supra MK4 2JZ Fast & Furious",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$42.00",
-        lineTotal: "$42.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 17)?.src || "/template photo/17.webp",
-      },
-      {
-        id: "art-1033-2",
-        name: "Nissan 240SX Rain Garage Spec",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 2,
-        unitPrice: "$26.00",
-        lineTotal: "$52.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 20)?.src || "/template photo/20.webp",
-      },
-    ],
-    subtotal: "$94.00",
-    shippingFee: "$0.00",
-    total: "$94.00",
-    numericTotal: 94.0,
-    date: "09 Nov",
-    daysAgo: 9,
-    statusHistory: [
-      { time: "09 Nov, 11:45", label: "Order received" },
-      { time: "09 Nov, 16:30", label: "300 DPI canvas print completed" },
-      { time: "10 Nov, 14:10", label: "Shipped via FedEx Ground #FX-772911" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1032",
-    cleanId: "1032",
-    customer: {
-      name: "Ava Morales",
-      email: "a.morales@mail.com",
-      phone: "+1 (404) 555-0163",
-    },
-    shipping: {
-      address: "3344 Peachtree Road NE, Suite 800",
-      cityStateZip: "Atlanta, GA 30326",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3Q009182736451e5",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Delivered",
-    items: [
-      {
-        id: "art-1032-1",
-        name: "Ferrari 812 GTS Golden Hour",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$48.00",
-        lineTotal: "$48.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 26)?.src || "/template photo/26.webp",
-      },
-    ],
-    subtotal: "$48.00",
-    shippingFee: "$0.00",
-    total: "$48.00",
-    numericTotal: 48.0,
-    date: "08 Nov",
-    daysAgo: 10,
-    statusHistory: [
-      { time: "08 Nov, 13:10", label: "Order received" },
-      { time: "08 Nov, 17:00", label: "Printed & framed in matte aluminum" },
-      { time: "09 Nov, 11:20", label: "Shipped via UPS Express" },
-      { time: "11 Nov, 13:05", label: "Delivered to Reception" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1031",
-    cleanId: "1031",
-    customer: {
-      name: "Jordan Hayes",
-      email: "j.hayes@mail.com",
-      phone: "+1 (503) 555-0147",
-    },
-    shipping: {
-      address: "1120 NW Couch Street, Suite 600",
-      cityStateZip: "Portland, OR 97209",
-      country: "United States",
-    },
-    payment: {
-      status: "Pending",
-      stripeRef: "pi_3P998877665544d1",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Received",
-    items: [
-      {
-        id: "art-1031-1",
-        name: "Nissan Skyline GTR R33 1000HP",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$34.00",
-        lineTotal: "$34.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 21)?.src || "/template photo/21.webp",
-      },
-    ],
-    subtotal: "$34.00",
-    shippingFee: "$0.00",
-    total: "$34.00",
-    numericTotal: 34.0,
-    date: "07 Nov",
-    daysAgo: 11,
-    statusHistory: [
-      { time: "07 Nov, 16:40", label: "Order received" },
-      { time: "07 Nov, 16:45", label: "Awaiting ACH settlement" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1030",
-    cleanId: "1030",
-    customer: {
-      name: "Chloe Bennett",
-      email: "c.bennett@mail.com",
-      phone: "+1 (619) 555-0172",
-    },
-    shipping: {
-      address: "600 West Broadway, Suite 1400",
-      cityStateZip: "San Diego, CA 92101",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P887766554433c2",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Printing",
-    items: [
-      {
-        id: "art-1030-1",
-        name: "Porsche GT3 RS Neon Pink Halo",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$36.00",
-        lineTotal: "$36.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 9)?.src || "/template photo/9.webp",
-      },
-      {
-        id: "art-1030-2",
-        name: "Mercedes-AMG CLE 53 Triple Panel",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$30.00",
-        lineTotal: "$30.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 22)?.src || "/template photo/22.webp",
-      },
-    ],
-    subtotal: "$66.00",
-    shippingFee: "$0.00",
-    total: "$66.00",
-    numericTotal: 66.0,
-    date: "06 Nov",
-    daysAgo: 12,
-    statusHistory: [
-      { time: "06 Nov, 10:20", label: "Order received" },
-      { time: "06 Nov, 14:15", label: "Artwork approved" },
-      { time: "07 Nov, 09:30", label: "Printing on 250 GSM Heavy Matte" },
-    ],
-    notes: ["Neon pink color match verified."],
-  },
-  {
-    id: "#1029",
-    cleanId: "1029",
-    customer: {
-      name: "Lucas Miller",
-      email: "l.miller@mail.com",
-      phone: "+1 (615) 555-0118",
-    },
-    shipping: {
-      address: "150 4th Avenue North, Suite 200",
-      cityStateZip: "Nashville, TN 37219",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P776655443322b3",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Delivered",
-    items: [
-      {
-        id: "art-1029-1",
-        name: "Koenigsegg Agera RS Thunderstorm",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$50.00",
-        lineTotal: "$50.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 29)?.src || "/template photo/29.webp",
-      },
-      {
-        id: "art-1029-2",
-        name: "Lamborghini Huracán Tecnica Sunset",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$45.00",
-        lineTotal: "$45.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 30)?.src || "/template photo/30.webp",
-      },
-    ],
-    subtotal: "$95.00",
-    shippingFee: "$0.00",
-    total: "$95.00",
-    numericTotal: 95.0,
-    date: "05 Nov",
-    daysAgo: 13,
-    statusHistory: [
-      { time: "05 Nov, 09:00", label: "Order received" },
-      { time: "05 Nov, 13:45", label: "Printed & quality inspected" },
-      { time: "06 Nov, 10:00", label: "Dispatched via FedEx Express" },
-      { time: "08 Nov, 12:15", label: "Delivered" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1028",
-    cleanId: "1028",
-    customer: {
-      name: "Zachary King",
-      email: "z.king@mail.com",
-      phone: "+1 (480) 555-0195",
-    },
-    shipping: {
-      address: "7134 E Stetson Drive, Suite 300",
-      cityStateZip: "Scottsdale, AZ 85251",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P665544332211a4",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Packing",
-    items: [
-      {
-        id: "art-1028-1",
-        name: "BMW M4 CSL One Life Just One",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$40.00",
-        lineTotal: "$40.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 24)?.src || "/template photo/24.webp",
-      },
-      {
-        id: "art-1028-2",
-        name: "Porsche 911 Turbo S Risograph",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$30.00",
-        lineTotal: "$30.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 25)?.src || "/template photo/25.webp",
-      },
-    ],
-    subtotal: "$70.00",
-    shippingFee: "$0.00",
-    total: "$70.00",
-    numericTotal: 70.0,
-    date: "04 Nov",
-    daysAgo: 14,
-    statusHistory: [
-      { time: "04 Nov, 11:30", label: "Order received" },
-      { time: "04 Nov, 16:00", label: "Archival printing finished" },
-      { time: "05 Nov, 08:45", label: "In packing station" },
-    ],
-    notes: ["Reinforced corner protectors added."],
-  },
-  {
-    id: "#1027",
-    cleanId: "1027",
-    customer: {
-      name: "Natalie Coleman",
-      email: "n.coleman@mail.com",
-      phone: "+1 (212) 555-0177",
-    },
-    shipping: {
-      address: "450 Lexington Avenue, 14th Floor",
-      cityStateZip: "New York, NY 10017",
-      country: "United States",
-    },
-    payment: {
-      status: "Refunded",
-      stripeRef: "pi_3P554433221100z5",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Received",
-    items: [
-      {
-        id: "art-1027-1",
-        name: "McLaren P1 GTR London Golden Hour",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$52.00",
-        lineTotal: "$52.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 27)?.src || "/template photo/27.webp",
-      },
-    ],
-    subtotal: "$52.00",
-    shippingFee: "$0.00",
-    total: "$52.00",
-    numericTotal: 52.0,
-    date: "03 Nov",
-    daysAgo: 15,
-    statusHistory: [
-      { time: "03 Nov, 14:10", label: "Order received" },
-      { time: "03 Nov, 17:00", label: "Refund requested by customer" },
-      { time: "03 Nov, 17:25", label: "Full refund processed via Stripe" },
-    ],
-    notes: ["Duplicate transaction submitted by mistake, refunded promptly."],
-  },
-  {
-    id: "#1026",
-    cleanId: "1026",
-    customer: {
-      name: "Dylan Ward",
-      email: "d.ward@mail.com",
-      phone: "+1 (702) 555-0158",
-    },
-    shipping: {
-      address: "3799 Las Vegas Boulevard South",
-      cityStateZip: "Las Vegas, NV 89109",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P443322110099y6",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Shipped",
-    items: [
-      {
-        id: "art-1026-1",
-        name: "Porsche GT3 RS 2022 Matte Obsidian",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$45.00",
-        lineTotal: "$45.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 19)?.src || "/template photo/19.webp",
-      },
-      {
-        id: "art-1026-2",
-        name: "Toyota Supra Crimson Red Adrenaline",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$32.00",
-        lineTotal: "$32.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 15)?.src || "/template photo/15.webp",
-      },
-    ],
-    subtotal: "$77.00",
-    shippingFee: "$0.00",
-    total: "$77.00",
-    numericTotal: 77.0,
-    date: "02 Nov",
-    daysAgo: 16,
-    statusHistory: [
-      { time: "02 Nov, 10:00", label: "Order received" },
-      { time: "02 Nov, 15:30", label: "Archival pigment printing complete" },
-      { time: "03 Nov, 11:00", label: "Shipped via UPS Ground #1Z998271" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1025",
-    cleanId: "1025",
-    customer: {
-      name: "Harper Davis",
-      email: "h.davis@mail.com",
-      phone: "+1 (415) 555-0131",
-    },
-    shipping: {
-      address: "1700 California Street, Suite 450",
-      cityStateZip: "San Francisco, CA 94109",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P332211009988x7",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Delivered",
-    items: [
-      {
-        id: "art-1025-1",
-        name: "McLaren 720S Red Street Graffiti",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$34.00",
-        lineTotal: "$34.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 3)?.src || "/template photo/3.webp",
-      },
-    ],
-    subtotal: "$34.00",
-    shippingFee: "$0.00",
-    total: "$34.00",
-    numericTotal: 34.0,
-    date: "01 Nov",
-    daysAgo: 17,
-    statusHistory: [
-      { time: "01 Nov, 12:20", label: "Order received" },
-      { time: "01 Nov, 16:40", label: "Printed on 300 GSM archival rag" },
-      { time: "02 Nov, 09:30", label: "Shipped via FedEx Priority" },
-      { time: "04 Nov, 10:15", label: "Delivered - Signed by H. Davis" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1024",
-    cleanId: "1024",
-    customer: {
-      name: "Austin Ramirez",
-      email: "a.ramirez@mail.com",
-      phone: "+1 (713) 555-0190",
-    },
-    shipping: {
-      address: "1000 Louisiana Street, Suite 2400",
-      cityStateZip: "Houston, TX 77002",
-      country: "United States",
-    },
-    payment: {
-      status: "Cancelled",
-      stripeRef: "pi_3P221100998877w8",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "None",
-    items: [
-      {
-        id: "art-1024-1",
-        name: "Bugatti Chiron Super Sport 300+",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$45.00",
-        lineTotal: "$45.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 10)?.src || "/template photo/10.webp",
-      },
-    ],
-    subtotal: "$45.00",
-    shippingFee: "$0.00",
-    total: "$45.00",
-    numericTotal: 45.0,
-    date: "31 Oct",
-    daysAgo: 18,
-    statusHistory: [
-      { time: "31 Oct, 18:00", label: "Order initiated" },
-      { time: "31 Oct, 18:30", label: "Cancelled per customer request" },
-    ],
-    notes: ["Customer changed vehicle preference."],
-  },
-  {
-    id: "#1023",
-    cleanId: "1023",
-    customer: {
-      name: "Isabella Rossi",
-      email: "i.rossi@mail.com",
-      phone: "+1 (312) 555-0189",
-    },
-    shipping: {
-      address: "111 South Wacker Drive, 28th Floor",
-      cityStateZip: "Chicago, IL 60606",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P110099887766v9",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Delivered",
-    items: [
-      {
-        id: "art-1023-1",
-        name: "Ferrari F40 Atrium Spec",
-        type: "Combined",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$46.00",
-        lineTotal: "$46.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 11)?.src || "/template photo/11.webp",
-      },
-      {
-        id: "art-1023-2",
-        name: "Pagani Zonda Obsidian Noir",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$34.00",
-        lineTotal: "$34.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 6)?.src || "/template photo/6.webp",
-      },
-    ],
-    subtotal: "$80.00",
-    shippingFee: "$0.00",
-    total: "$80.00",
-    numericTotal: 80.0,
-    date: "30 Oct",
-    daysAgo: 19,
-    statusHistory: [
-      { time: "30 Oct, 09:40", label: "Order received" },
-      { time: "30 Oct, 14:15", label: "Quality inspected & approved" },
-      { time: "31 Oct, 10:00", label: "Dispatched via DHL Express" },
-      { time: "02 Nov, 11:30", label: "Delivered" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1022",
-    cleanId: "1022",
-    customer: {
-      name: "Caleb Foster",
-      email: "c.foster@mail.com",
-      phone: "+1 (206) 555-0149",
-    },
-    shipping: {
-      address: "500 Pine Street, Suite 400",
-      cityStateZip: "Seattle, WA 98101",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P009988776655u0",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Printing",
-    items: [
-      {
-        id: "art-1022-1",
-        name: "Ford Mustang GT350 Heritage Stripe",
-        type: "Individual",
-        size: "18 x 24 in",
-        qty: 1,
-        unitPrice: "$38.00",
-        lineTotal: "$38.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 5)?.src || "/template photo/5.webp",
-      },
-      {
-        id: "art-1022-2",
-        name: "Mazda RX-7 Veilside Tokyo Drift",
-        type: "Individual",
-        size: "12 x 18 in",
-        qty: 1,
-        unitPrice: "$28.00",
-        lineTotal: "$28.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 13)?.src || "/template photo/13.webp",
-      },
-    ],
-    subtotal: "$66.00",
-    shippingFee: "$0.00",
-    total: "$66.00",
-    numericTotal: 66.0,
-    date: "29 Oct",
-    daysAgo: 20,
-    statusHistory: [
-      { time: "29 Oct, 11:00", label: "Order received" },
-      { time: "29 Oct, 15:20", label: "Color proof checked" },
-      { time: "30 Oct, 09:15", label: "Printing on 300 GSM Rag" },
-    ],
-    notes: [],
-  },
-  {
-    id: "#1021",
-    cleanId: "1021",
-    customer: {
-      name: "Savannah Price",
-      email: "s.price@mail.com",
-      phone: "+1 (305) 555-0164",
-    },
-    shipping: {
-      address: "1450 Brickell Avenue, Suite 1900",
-      cityStateZip: "Miami, FL 33131",
-      country: "United States",
-    },
-    payment: {
-      status: "Paid",
-      stripeRef: "pi_3P998877665544t1",
-      stripeUrl: "https://stripe.com",
-    },
-    stage: "Delivered",
-    items: [
-      {
-        id: "art-1021-1",
-        name: "Porsche 911 Turbo S Shark Blue Cyber",
-        type: "Combined",
-        size: "18 x 24 in",
-        qty: 2,
-        unitPrice: "$35.00",
-        lineTotal: "$70.00",
-        image: TEMPLATE_PHOTOS.find((t) => t.id === 4)?.src || "/template photo/4.webp",
-      },
-    ],
-    subtotal: "$70.00",
-    shippingFee: "$0.00",
-    total: "$70.00",
-    numericTotal: 70.0,
-    date: "28 Oct",
-    daysAgo: 21,
-    statusHistory: [
-      { time: "28 Oct, 13:30", label: "Order received" },
-      { time: "28 Oct, 16:45", label: "Printed & packaged" },
-      { time: "29 Oct, 11:15", label: "Shipped via FedEx Express" },
-      { time: "31 Oct, 15:00", label: "Delivered to Concierge" },
-    ],
-    notes: ["Concierge delivery confirmed."],
-  },
-]
+      status: o.payment.status,
+      stripeRef: o.payment.stripeRef,
+      stripeUrl: o.payment.stripeUrl,
+    },
+    stage: (getOrderStage(o.id) as OrderStage) || "Order Received",
+    items,
+    subtotal: formatMoney(o.subtotal),
+    shippingFee: formatMoney(o.shippingFee),
+    total: formatMoney(o.total),
+    numericTotal: o.total,
+    date: shortDate(o.createdAt),
+    daysAgo: calcDaysAgo(o.createdAt),
+    statusHistory,
+    notes: o.notes || [],
+    customerRecentGenerations,
+    customerRecentOrders,
+  }
+})
 
 export function getDemoOrderById(id: string): DemoOrder | undefined {
-  const clean = id.replace("#", "").trim()
-  return (
-    DEMO_ORDERS.find((o) => o.cleanId === clean || o.id === id) ||
-    DEMO_ORDERS[0]
+  const clean = id.replace("#", "").trim().toLowerCase()
+  return DEMO_ORDERS.find(
+    (o) => o.cleanId.toLowerCase() === clean || o.id.toLowerCase() === `#${clean}`
   )
 }

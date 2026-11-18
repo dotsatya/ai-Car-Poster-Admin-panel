@@ -47,18 +47,13 @@ export function NavUser({
     setMounted(true)
   }, [])
 
-  const displayName = mounted ? user.name : "Poster Gen Admin"
-  const displayEmail = mounted ? user.email : "admin1@gmail.com"
+  const displayName = mounted
+    ? (user.name && user.name !== "Poster Gen Admin" ? user.name : "Alexander Drake")
+    : "Alexander Drake"
+  const displayEmail = mounted ? (user.email || "admin1@gmail.com") : "admin1@gmail.com"
 
-  // Generate initials for avatar fallback
-  const initials = displayName
-    ? displayName
-        .split(" ")
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase()
-    : "PG"
+  // User logo initial according to the 1st letter of the email
+  const emailInitial = (displayEmail?.trim()?.[0] || "A").toUpperCase()
 
   return (
     <SidebarMenu>
@@ -72,13 +67,13 @@ export function NavUser({
               />
             }
           >
-            <Avatar className="h-8 w-8 rounded-md border border-primary/30">
-              <AvatarImage src={user.avatar} alt={displayName} />
+            <Avatar className="h-8 w-8 rounded-full border border-border/80">
+              {user.avatar ? <AvatarImage src={user.avatar} alt={displayName} className="rounded-full" /> : null}
               <AvatarFallback
                 suppressHydrationWarning
-                className="rounded-md bg-gradient-to-br from-zinc-800 to-black text-primary font-semibold text-xs border border-primary/20"
+                className="rounded-full bg-secondary text-foreground font-medium text-xs"
               >
-                {initials}
+                {emailInitial}
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -106,13 +101,13 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2.5 px-2 py-2 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-md border border-primary/30">
-                    <AvatarImage src={user.avatar} alt={displayName} />
+                  <Avatar className="h-8 w-8 rounded-full border border-border/80">
+                    {user.avatar ? <AvatarImage src={user.avatar} alt={displayName} className="rounded-full" /> : null}
                     <AvatarFallback
                       suppressHydrationWarning
-                      className="rounded-md bg-gradient-to-br from-zinc-800 to-black text-primary font-semibold text-xs border border-primary/20"
+                      className="rounded-full bg-secondary text-foreground font-medium text-xs"
                     >
-                      {initials}
+                      {emailInitial}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -137,10 +132,6 @@ export function NavUser({
               <DropdownMenuItem className="cursor-pointer hover:bg-accent/80 transition-colors" render={<Link href="/dashboard/settings" />}>
                 <BadgeCheck className="size-4 text-primary" />
                 <span className="text-sm">Account</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-accent/80 transition-colors">
-                <Bell className="size-4 text-muted-foreground" />
-                <span className="text-sm">Notifications</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator className="bg-border/60" />

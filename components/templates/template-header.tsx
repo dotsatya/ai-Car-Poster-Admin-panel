@@ -15,7 +15,7 @@ export function TemplateHeader({ onNewTemplate }: TemplateHeaderProps) {
           Poster Templates
         </h1>
         <p className="text-sm font-normal text-muted-foreground mt-1">
-          Browse, configure, and manage high-resolution automotive poster layouts and typography blueprints.
+          Browse, configure, and manage high-resolution automotive poster layouts.
         </p>
       </div>
       <button

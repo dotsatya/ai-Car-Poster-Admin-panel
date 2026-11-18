@@ -21,14 +21,14 @@ export function TemplateFilters({
   return (
     <div className="flex flex-col gap-3">
       {/* Search Input */}
-      <div className="relative">
+      <div className="relative w-full">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
         <input
           type="text"
           placeholder="Search templates by vehicle, style, or title..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full rounded-md border border-border/80 bg-card/60 pl-10 pr-4 py-2 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+          className="w-full rounded-md border border-border/80 bg-card px-3.5 pl-10 py-2.5 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
         />
       </div>
 
@@ -44,7 +44,7 @@ export function TemplateFilters({
               className={`rounded-md px-3 py-1.5 text-xs transition-all cursor-pointer ${
                 isActive
                   ? "bg-secondary text-foreground border border-primary/50 font-medium shadow-sm"
-                  : "bg-card text-muted-foreground border border-border/80 hover:text-foreground hover:border-border font-normal"
+                  : "bg-card text-muted-foreground border border-border/80 hover:text-foreground hover:border-primary/40 font-normal"
               }`}
             >
               {cat}

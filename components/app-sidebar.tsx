@@ -84,14 +84,14 @@ const navGroups: NavGroup[] = [
         icon: UserCog,
       },
       {
-        title: "Store Settings",
-        url: "/dashboard/store-settings",
-        icon: Store,
-      },
-      {
         title: "Reports",
         url: "/dashboard/reports",
         icon: ChartNoAxesCombined,
+      },
+      {
+        title: "Store Settings",
+        url: "/dashboard/store-settings",
+        icon: Store,
       },
     ],
   },
@@ -100,18 +100,18 @@ const navGroups: NavGroup[] = [
 // User profile matching the design
 const data = {
   user: {
-    name: "Poster Gen Admin",
+    name: "Alexander Drake",
     email: "admin1@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "",
   },
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
   const activeUser = {
-    name: user?.name || "Poster Gen Admin",
+    name: user?.name && user.name !== "Poster Gen Admin" ? user.name : "Alexander Drake",
     email: user?.email || "admin1@gmail.com",
-    avatar: user?.avatar || "/avatars/shadcn.jpg",
+    avatar: user?.avatar || "",
   }
 
   return (

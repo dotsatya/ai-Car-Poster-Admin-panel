@@ -16,6 +16,7 @@ interface AuthContextType {
   isLoading: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   signup: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  updateUser: (data: Partial<AuthUser>) => void
   logout: () => void
 }
 
@@ -25,10 +26,10 @@ const STORAGE_KEY = "poster_gen_auth_user"
 const CREDENTIALS_KEY = "poster_gen_registered_users"
 
 const DEFAULT_ADMIN: AuthUser = {
-  name: "Poster Gen Admin",
+  name: "Alexander Drake",
   email: "admin1@gmail.com",
   role: "Full Administrator",
-  avatar: "/avatars/shadcn.jpg",
+  avatar: "",
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -42,6 +43,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY)
       if (stored) {
         const parsed = JSON.parse(stored) as AuthUser
+        // Automatically migrate legacy placeholder name if present
+        if (parsed.name === "Poster Gen Admin" || !parsed.name) {
+          parsed.name = "Alexander Drake"
+          parsed.avatar = ""
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed))
+        }
         setUser(parsed)
       } else {
         // First-time convenience: if no session, leave null so login screen displays
@@ -53,6 +60,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false)
     }
   }, [])
+
+  // Profile update handler
+  const updateUser = (data: Partial<AuthUser>) => {
+    setUser((prev) => {
+      const updated = prev ? { ...prev, ...data } : { ...DEFAULT_ADMIN, ...data }
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+      } catch {
+        // ignore
+      }
+      return updated
+    })
+  }
 
   // Login handler
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
@@ -184,6 +204,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         login,
         signup,
+        updateUser,
         logout,
       }}
     >

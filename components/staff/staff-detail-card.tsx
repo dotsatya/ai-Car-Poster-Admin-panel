@@ -2,61 +2,188 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ArrowLeft, ChevronDown } from "lucide-react"
-import { StaffMember, PERMISSIONS_MATRIX, StaffRole } from "@/lib/demoStaff"
+import { ArrowLeft, Pencil, CheckCircle2, AlertTriangle } from "lucide-react"
+import {
+  StaffMember,
+  StaffRole,
+  ROLE_ACCESS_SUMMARY,
+  mergeStaffMembers,
+} from "@/lib/demoStaff"
 
 interface StaffDetailCardProps {
   staff: StaffMember
 }
 
+const AVAILABLE_ROLES: StaffRole[] = [
+  "Full administrator",
+  "Order staff",
+  "Production staff",
+]
+
 export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
-  const [name, setName] = React.useState(initialStaff.name)
-  const [email, setEmail] = React.useState(initialStaff.email)
-  const [phone, setPhone] = React.useState(initialStaff.phone || "+1 (555) 234-5678")
-  const [role, setRole] = React.useState(initialStaff.role)
-  const [status, setStatus] = React.useState<"Active" | "Deactivated">(
-    initialStaff.status
-  )
-  const [actions, setActions] = React.useState(initialStaff.actions)
+  const [staff, setStaff] = React.useState<StaffMember>(initialStaff)
   const [feedback, setFeedback] = React.useState<string | null>(null)
 
-  const firstName = name.split(" ")[0] || "User"
+  // Full name inline editing state
+  const [isEditingName, setIsEditingName] = React.useState(false)
+  const [tempName, setTempName] = React.useState(initialStaff.name)
 
-  function handleToggleStatus() {
-    const newStatus = status === "Active" ? "Deactivated" : "Active"
-    const newAction = {
-      id: `act-${Date.now()}`,
-      date: new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-      }),
-      text:
-        newStatus === "Deactivated"
-          ? `Account deactivated by Riya`
-          : `Account reactivated by Riya`,
+  // Phone inline editing state
+  const [isEditingPhone, setIsEditingPhone] = React.useState(false)
+  const [tempPhone, setTempPhone] = React.useState(
+    initialStaff.phone || "+1 (555) 000-0000"
+  )
+
+  // Role selection state
+  const initialRole = (
+    AVAILABLE_ROLES.includes(initialStaff.role as StaffRole)
+      ? initialStaff.role
+      : "Full administrator"
+  ) as StaffRole
+
+  const [savedRole, setSavedRole] = React.useState<StaffRole>(initialRole)
+  const [selectedRole, setSelectedRole] = React.useState<StaffRole>(initialRole)
+
+  // Deactivate confirmation dialog state
+  const [showDeactivateDialog, setShowDeactivateDialog] = React.useState(false)
+
+  // Load persisted updates from localStorage
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("staff_members_store")
+      if (stored) {
+        const merged = mergeStaffMembers(stored)
+        const found = merged.find(
+          (s) => s.cleanId === initialStaff.cleanId || s.id === initialStaff.id
+        )
+        if (found) {
+          setStaff(found)
+          setTempName(found.name)
+          setTempPhone(found.phone || "+1 (555) 000-0000")
+          const currentRole = (
+            AVAILABLE_ROLES.includes(found.role as StaffRole)
+              ? found.role
+              : "Full administrator"
+          ) as StaffRole
+          setSavedRole(currentRole)
+          setSelectedRole(currentRole)
+        }
+      }
+    } catch {
+      // ignore
     }
-    setStatus(newStatus)
-    setActions((prev) => [newAction, ...prev])
-    setFeedback(`Staff member account ${newStatus.toLowerCase()}.`)
-    setTimeout(() => setFeedback(null), 3000)
+  }, [initialStaff.cleanId, initialStaff.id])
+
+  // Save changes to localStorage
+  const persistStaffUpdate = (updated: StaffMember) => {
+    setStaff(updated)
+    try {
+      const stored = localStorage.getItem("staff_members_store")
+      const list = mergeStaffMembers(stored)
+      const index = list.findIndex(
+        (s) => s.cleanId === updated.cleanId || s.id === updated.id
+      )
+      if (index >= 0) {
+        list[index] = updated
+      } else {
+        list.push(updated)
+      }
+      localStorage.setItem("staff_members_store", JSON.stringify(list))
+    } catch {
+      // ignore
+    }
   }
 
-  function handleRoleChange(newRole: string) {
-    setRole(newRole)
+  const showNotification = (msg: string) => {
+    setFeedback(msg)
+    setTimeout(() => setFeedback(null), 3500)
+  }
+
+  // Name save / cancel
+  const handleSaveName = () => {
+    if (!tempName.trim()) return
+    const updated: StaffMember = { ...staff, name: tempName.trim() }
+    persistStaffUpdate(updated)
+    setIsEditingName(false)
+    showNotification("Full name saved successfully.")
+  }
+
+  const handleCancelName = () => {
+    setTempName(staff.name)
+    setIsEditingName(false)
+  }
+
+  // Phone save / cancel
+  const handleSavePhone = () => {
+    const updated: StaffMember = { ...staff, phone: tempPhone.trim() }
+    persistStaffUpdate(updated)
+    setIsEditingPhone(false)
+    showNotification("Phone number saved successfully.")
+  }
+
+  const handleCancelPhone = () => {
+    setTempPhone(staff.phone || "+1 (555) 000-0000")
+    setIsEditingPhone(false)
+  }
+
+  // Role save / cancel
+  const handleSaveRole = () => {
+    const now = new Date()
+    const dateStr = now.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+    })
     const newAction = {
       id: `act-${Date.now()}`,
-      date: new Date().toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-      }),
-      text: `Role set to ${newRole} by Riya`,
+      date: dateStr,
+      text: `Role set to ${selectedRole} by Admin`,
     }
-    setActions((prev) => [newAction, ...prev])
+
+    const updated: StaffMember = {
+      ...staff,
+      role: selectedRole,
+      actions: [newAction, ...staff.actions],
+    }
+
+    persistStaffUpdate(updated)
+    setSavedRole(selectedRole)
+    showNotification(`Role updated to "${selectedRole}" and saved.`)
+  }
+
+  const handleCancelRole = () => {
+    setSelectedRole(savedRole)
+  }
+
+  // Deactivate / Reactivate confirmation
+  const handleConfirmToggleStatus = () => {
+    const newStatus = staff.status === "Active" ? "Deactivated" : "Active"
+    const now = new Date()
+    const dateStr = now.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+    })
+    const newAction = {
+      id: `act-${Date.now()}`,
+      date: dateStr,
+      text: `Account ${newStatus.toLowerCase()} by Admin`,
+    }
+
+    const updated: StaffMember = {
+      ...staff,
+      status: newStatus,
+      actions: [newAction, ...staff.actions],
+    }
+
+    persistStaffUpdate(updated)
+    setShowDeactivateDialog(false)
+    showNotification(
+      `Account ${newStatus === "Active" ? "reactivated" : "deactivated"} successfully.`
+    )
   }
 
   return (
     <div className="flex flex-col gap-4 max-w-5xl">
-      {/* Back to Staff & Roles navigation */}
+      {/* 1. "Back to Staff & Roles" link */}
       <div>
         <Link
           href="/dashboard/staff"
@@ -68,216 +195,311 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
       </div>
 
       {feedback && (
-        <div className="p-3 text-xs bg-emerald-950/60 border border-emerald-800/40 text-emerald-400 rounded-md">
-          {feedback}
+        <div className="p-3 text-xs bg-emerald-950/60 border border-emerald-800/40 text-emerald-400 rounded-md flex items-center gap-2">
+          <CheckCircle2 className="size-4 shrink-0" />
+          <span>{feedback}</span>
         </div>
       )}
 
-      {/* Main Staff Detail Card matching mockup */}
+      {/* Main Card */}
       <div className="rounded-md border border-border/80 bg-card p-6 sm:p-7 text-card-foreground shadow-sm space-y-6">
-        {/* Header Row: Edit: {Name} and Status Badge */}
-        <div className="flex items-center justify-between pb-1">
+        {/* Title: "Edit staff details" with Active/Deactivated badge */}
+        <div className="flex items-center justify-between pb-2 border-b border-border/60">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Edit: {name}
+            Edit staff details
           </h1>
 
           <div>
-            {status === "Active" ? (
-              <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
+            {staff.status === "Active" ? (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
+                <span className="size-1.5 rounded-full bg-emerald-400" />
                 Active
               </span>
             ) : (
-              <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-rose-950/70 text-rose-400 border-rose-800/40">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-md border bg-rose-950/70 text-rose-400 border-rose-800/40">
+                <span className="size-1.5 rounded-full bg-rose-400" />
                 Deactivated
               </span>
             )}
           </div>
         </div>
 
-        {/* 4-Column Form Fields: Full name, Email, Phone number, Role */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {/* Full name */}
-          <div>
-            <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
+        {/* 2. Detail fields: Full name, Phone, Email */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Full name: click to edit */}
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground block font-normal">
               Full name
             </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
-            />
-          </div>
-
-          {/* Email (used to sign in) */}
-          <div>
-            <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
-              Email (used to sign in)
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
-            />
-          </div>
-
-          {/* Phone number */}
-          <div>
-            <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
-              Phone number
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+1 (555) 000-0000"
-              className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
-            />
-          </div>
-
-          {/* Role */}
-          <div>
-            <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
-              Role
-            </label>
-            <div className="relative">
-              <select
-                value={role}
-                onChange={(e) => handleRoleChange(e.target.value)}
-                className="w-full appearance-none rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-9 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
+            {!isEditingName ? (
+              <div
+                onClick={() => {
+                  setTempName(staff.name)
+                  setIsEditingName(true)
+                }}
+                className="group flex items-center justify-between p-2.5 rounded-md border border-border/80 bg-[#131418] cursor-pointer hover:border-primary/50 transition-colors"
+                title="Click to edit full name"
               >
-                <option value="Production staff" className="bg-[#121315] text-foreground">
-                  Production staff
-                </option>
-                <option value="Order staff" className="bg-[#121315] text-foreground">
-                  Order staff
-                </option>
-                <option value="Full administrator" className="bg-[#121315] text-foreground">
-                  Full administrator
-                </option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+                <span className="text-sm font-medium text-foreground">
+                  {staff.name}
+                </span>
+                <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                  <Pencil className="size-3" />
+                  <span>Click to edit</span>
+                </span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={tempName}
+                  onChange={(e) => setTempName(e.target.value)}
+                  autoFocus
+                  placeholder="Enter full name"
+                  className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveName}
+                    className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm shadow-red-950/30"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelName}
+                    className="rounded-md border border-border/80 bg-card/80 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Phone: click to edit */}
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground block font-normal">
+              Phone
+            </label>
+            {!isEditingPhone ? (
+              <div
+                onClick={() => {
+                  setTempPhone(staff.phone || "+1 (555) 000-0000")
+                  setIsEditingPhone(true)
+                }}
+                className="group flex items-center justify-between p-2.5 rounded-md border border-border/80 bg-[#131418] cursor-pointer hover:border-primary/50 transition-colors"
+                title="Click to edit phone number"
+              >
+                <span className="text-sm font-medium text-foreground">
+                  {staff.phone || "+1 (555) 000-0000"}
+                </span>
+                <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                  <Pencil className="size-3" />
+                  <span>Click to edit</span>
+                </span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  type="tel"
+                  value={tempPhone}
+                  onChange={(e) => setTempPhone(e.target.value)}
+                  autoFocus
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSavePhone}
+                    className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm shadow-red-950/30"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelPhone}
+                    className="rounded-md border border-border/80 bg-card/80 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Email: read-only with note */}
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground block font-normal">
+              Email
+            </label>
+            <div className="p-2.5 rounded-md border border-border/60 bg-[#131418]/60 cursor-not-allowed">
+              <span className="text-sm text-muted-foreground">{staff.email}</span>
             </div>
+            <span className="text-[11px] text-muted-foreground/80 mt-1 block">
+              Cannot be changed
+            </span>
           </div>
         </div>
 
-        {/* Permissions Table Section: What this role can open */}
-        <div className="pt-2">
-          <span className="text-xs text-muted-foreground block mb-3 font-normal">
-            What this role can open
-          </span>
+        {/* 3. Role section: Row of 3 radio buttons & live permissions summary */}
+        <div className="pt-2 border-t border-border/60 space-y-3">
+          <label className="text-xs text-muted-foreground block font-normal">
+            Role
+          </label>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border/40 text-xs font-normal text-muted-foreground">
-                  <th className="pb-2.5 font-normal">Page</th>
-                  <th className="pb-2.5 font-normal">Full administrator</th>
-                  <th className="pb-2.5 font-normal">Order staff</th>
-                  <th className="pb-2.5 font-normal">Production staff</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
-                {PERMISSIONS_MATRIX.map((row) => (
-                  <tr key={row.page} className="hover:bg-secondary/20 transition-colors">
-                    {/* Page Name */}
-                    <td className="py-3 font-semibold text-foreground text-sm">
-                      {row.page}
-                    </td>
+          {/* Row of three radio buttons */}
+          <div className="flex flex-wrap items-center gap-6 sm:gap-8 pt-1">
+            {AVAILABLE_ROLES.map((r) => (
+              <label
+                key={r}
+                className="flex items-center gap-2.5 cursor-pointer text-sm font-medium text-foreground hover:text-primary transition-colors"
+              >
+                <input
+                  type="radio"
+                  name="staff-role"
+                  value={r}
+                  checked={selectedRole === r}
+                  onChange={() => setSelectedRole(r)}
+                  className="size-4 accent-primary cursor-pointer"
+                />
+                <span>{r}</span>
+              </label>
+            ))}
+          </div>
 
-                    {/* Full administrator */}
-                    <td className="py-3">
-                      <span
-                        className={
-                          row.fullAdmin === "No"
-                            ? "text-muted-foreground font-normal text-sm"
-                            : "text-emerald-400 font-medium text-sm"
-                        }
-                      >
-                        {row.fullAdmin}
-                      </span>
-                    </td>
+          {/* Directly below the row: short line listing what the selected role can open */}
+          <div className="text-xs text-muted-foreground bg-secondary/30 p-3 rounded-md border border-border/60 leading-relaxed">
+            <span className="font-medium text-foreground/90">Can open: </span>
+            <span className="text-foreground/80">
+              {ROLE_ACCESS_SUMMARY[selectedRole]}
+            </span>
+          </div>
 
-                    {/* Order staff */}
-                    <td className="py-3">
-                      <span
-                        className={
-                          row.orderStaff === "No"
-                            ? "text-muted-foreground font-normal text-sm"
-                            : "text-emerald-400 font-medium text-sm"
-                        }
-                      >
-                        {row.orderStaff}
-                      </span>
-                    </td>
-
-                    {/* Production staff */}
-                    <td className="py-3">
-                      <span
-                        className={
-                          row.productionStaff === "No"
-                            ? "text-muted-foreground font-normal text-sm"
-                            : "text-emerald-400 font-medium text-sm"
-                        }
-                      >
-                        {row.productionStaff}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* 4. Save changes and Cancel buttons for the role */}
+          <div className="flex items-center gap-2.5 pt-2">
+            <button
+              type="button"
+              disabled={selectedRole === savedRole}
+              onClick={handleSaveRole}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              Save changes
+            </button>
+            <button
+              type="button"
+              disabled={selectedRole === savedRole}
+              onClick={handleCancelRole}
+              className="inline-flex items-center gap-2 rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-sm"
+            >
+              Cancel
+            </button>
           </div>
         </div>
 
-        {/* Bottom Section (2 Columns): Deactivate Box & Staff action history */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-          {/* Deactivate / Reactivate account box */}
+        {/* 5. Bottom area, two columns: Deactivate box (left) & Staff action history (right) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-border/60">
+          {/* Left: Deactivate account box with danger button */}
           <div className="rounded-md border border-border/70 bg-[#141519] p-5 flex flex-col justify-between">
             <div>
               <h3 className="font-semibold text-foreground text-sm">
-                {status === "Active" ? "Deactivate account" : "Reactivate account"}
+                {staff.status === "Active" ? "Deactivate account" : "Reactivate account"}
               </h3>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                {status === "Active"
-                  ? `${firstName} can no longer sign in. Past actions stay in the history.`
-                  : `${firstName} will regain access to the staff portal and dashboard.`}
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                {staff.status === "Active"
+                  ? `${staff.name} can no longer sign in. Past actions stay in the history.`
+                  : `${staff.name} will regain access to the staff portal and dashboard.`}
               </p>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-5">
               <button
                 type="button"
-                onClick={handleToggleStatus}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-medium cursor-pointer transition-colors border ${
-                  status === "Active"
-                    ? "border-rose-900/60 bg-rose-950/20 text-rose-400 hover:bg-rose-950/40"
-                    : "border-emerald-800/60 bg-emerald-950/20 text-emerald-400 hover:bg-emerald-950/40"
+                onClick={() => setShowDeactivateDialog(true)}
+                className={`rounded-md px-3.5 py-2 text-sm font-medium cursor-pointer transition-colors border shadow-sm ${
+                  staff.status === "Active"
+                    ? "border-rose-900/60 bg-rose-950/40 text-rose-400 hover:bg-rose-900/50 hover:text-rose-300"
+                    : "border-emerald-800/60 bg-emerald-950/40 text-emerald-400 hover:bg-emerald-900/50 hover:text-emerald-300"
                 }`}
               >
-                {status === "Active" ? "Deactivate" : "Reactivate"}
+                {staff.status === "Active" ? "Deactivate account" : "Reactivate account"}
               </button>
             </div>
           </div>
 
-          {/* Staff action history */}
+          {/* Right: Staff action history list */}
           <div>
-            <span className="text-xs text-muted-foreground block mb-2 font-normal">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-3">
               Staff action history
             </span>
-            <div className="space-y-1.5 text-xs sm:text-sm font-semibold text-foreground">
-              {actions.map((act) => (
-                <div key={act.id} className="flex items-center gap-1.5">
-                  <span>{act.date}</span>
+            <div className="space-y-2 text-xs sm:text-sm text-foreground/90">
+              {staff.actions.map((act) => (
+                <div key={act.id} className="flex items-start gap-2 leading-relaxed">
+                  <span className="font-semibold text-foreground shrink-0">
+                    {act.date}
+                  </span>
                   <span className="text-muted-foreground font-normal">·</span>
-                  <span>{act.text}</span>
+                  <span className="text-foreground/90">{act.text}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog for Deactivate / Reactivate */}
+      {showDeactivateDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="w-full max-w-md rounded-md border border-border/80 bg-[#121316] p-6 shadow-2xl flex flex-col gap-4">
+            <div className="flex items-start gap-3">
+              <div
+                className={`p-2 rounded-full shrink-0 ${
+                  staff.status === "Active"
+                    ? "bg-rose-950/60 border border-rose-900/60 text-rose-400"
+                    : "bg-emerald-950/60 border border-emerald-900/60 text-emerald-400"
+                }`}
+              >
+                <AlertTriangle className="size-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-foreground">
+                  {staff.status === "Active"
+                    ? "Deactivate staff account?"
+                    : "Reactivate staff account?"}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                  {staff.status === "Active"
+                    ? `Are you sure you want to deactivate ${staff.name}'s account? They will immediately lose access to the staff portal and dashboard.`
+                    : `Are you sure you want to reactivate ${staff.name}'s account? They will regain access to the staff portal.`}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowDeactivateDialog(false)}
+                className="rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmToggleStatus}
+                className={`rounded-md px-4 py-2 text-sm font-medium transition-colors shadow-sm cursor-pointer border ${
+                  staff.status === "Active"
+                    ? "border-rose-900/60 bg-rose-950/40 text-rose-400 hover:bg-rose-900/50 hover:text-rose-300"
+                    : "border-emerald-800/60 bg-emerald-950/40 text-emerald-400 hover:bg-emerald-900/50 hover:text-emerald-300"
+                }`}
+              >
+                {staff.status === "Active" ? "Confirm Deactivate" : "Confirm Reactivate"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

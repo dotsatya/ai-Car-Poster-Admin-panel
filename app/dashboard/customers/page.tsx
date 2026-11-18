@@ -1,15 +1,27 @@
 "use client"
 
 import * as React from "react"
+import { useSearchParams } from "next/navigation"
 import { DEMO_CUSTOMERS } from "@/lib/demoCustomer"
 import { CustomerHeader } from "@/components/customers/customer-header"
 import { CustomerFilters } from "@/components/customers/customer-filters"
 import { CustomerListTable } from "@/components/customers/customer-list-table"
 
-export default function CustomersPage() {
-  const [search, setSearch] = React.useState("")
+function CustomersPageContent() {
+  const searchParams = useSearchParams()
+  const initialQuery = searchParams.get("search") || searchParams.get("q") || searchParams.get("email") || ""
+
+  const [search, setSearch] = React.useState(initialQuery)
   const [accountFilter, setAccountFilter] = React.useState("all")
   const [sortBy, setSortBy] = React.useState("recent")
+
+  // React to search params update
+  React.useEffect(() => {
+    const q = searchParams.get("search") || searchParams.get("q") || searchParams.get("email")
+    if (q !== null && q !== undefined) {
+      setSearch(q)
+    }
+  }, [searchParams])
 
   // Filter and sort customers
   const filteredCustomers = React.useMemo(() => {
@@ -80,5 +92,19 @@ export default function CustomersPage() {
       {/* Customer List Table & Pagination */}
       <CustomerListTable customers={filteredCustomers} />
     </div>
+  )
+}
+
+export default function CustomersPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      }
+    >
+      <CustomersPageContent />
+    </React.Suspense>
   )
 }

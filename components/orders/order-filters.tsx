@@ -84,19 +84,28 @@ export function OrderFilters({
             <option value="all" className="bg-[#121315] text-foreground">
               All stages
             </option>
-            <option value="received" className="bg-[#121315] text-foreground">
-              Received
+            <option value="Order Received" className="bg-[#121315] text-foreground">
+              Order Received
             </option>
-            <option value="painting" className="bg-[#121315] text-foreground">
-              Painting
+            <option value="Order Confirmed" className="bg-[#121315] text-foreground">
+              Order Confirmed
             </option>
-            <option value="packing" className="bg-[#121315] text-foreground">
-              Packing
+            <option value="Preparing Artwork" className="bg-[#121315] text-foreground">
+              Preparing Artwork
             </option>
-            <option value="shipped" className="bg-[#121315] text-foreground">
+            <option value="Printing" className="bg-[#121315] text-foreground">
+              Printing
+            </option>
+            <option value="Quality Check & Packing" className="bg-[#121315] text-foreground">
+              Quality Check & Packing
+            </option>
+            <option value="Shipped" className="bg-[#121315] text-foreground">
               Shipped
             </option>
-            <option value="delivered" className="bg-[#121315] text-foreground">
+            <option value="Out for Delivery" className="bg-[#121315] text-foreground">
+              Out for Delivery
+            </option>
+            <option value="Delivered" className="bg-[#121315] text-foreground">
               Delivered
             </option>
           </select>
@@ -110,11 +119,17 @@ export function OrderFilters({
             onChange={(e) => onDateFilterChange(e.target.value)}
             className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
           >
+            <option value="1w" className="bg-[#121315] text-foreground">
+              Last week
+            </option>
             <option value="30d" className="bg-[#121315] text-foreground">
               Last 30 days
             </option>
-            <option value="7d" className="bg-[#121315] text-foreground">
-              Last 7 days
+            <option value="6m" className="bg-[#121315] text-foreground">
+              Last 6 mon
+            </option>
+            <option value="1y" className="bg-[#121315] text-foreground">
+              Last 1 year
             </option>
             <option value="custom" className="bg-[#121315] text-foreground">
               Custom range

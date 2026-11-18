@@ -1,17 +1,30 @@
 "use client"
 
 import * as React from "react"
-import { DEMO_AI_JOBS, AI_STATS, AiGenerationJob } from "@/lib/demoAiGenerations"
+import { useSearchParams } from "next/navigation"
+import { DEMO_AI_JOBS, AI_STATS } from "@/lib/demoAiGenerations"
 import { AiHeader } from "@/components/ai-generations/ai-header"
 import { AiKpiCards } from "@/components/ai-generations/ai-kpi-cards"
 import { AiFilters } from "@/components/ai-generations/ai-filters"
 import { AiJobsTable } from "@/components/ai-generations/ai-jobs-table"
 
-export default function AiGenerationsPage() {
-  const [search, setSearch] = React.useState("")
+function AiGenerationsContent() {
+  const searchParams = useSearchParams()
+  const initialQuery = searchParams.get("search") || searchParams.get("q") || searchParams.get("customer") || ""
+
+  const [search, setSearch] = React.useState(initialQuery)
   const [stateFilter, setStateFilter] = React.useState("all")
   const [typeFilter, setTypeFilter] = React.useState("all")
-  const [timeFilter, setTimeFilter] = React.useState("today")
+  const [timeFilter, setTimeFilter] = React.useState(initialQuery ? "all" : "today")
+
+  // React to search param updates (e.g. clicking View All Generations)
+  React.useEffect(() => {
+    const q = searchParams.get("search") || searchParams.get("q") || searchParams.get("customer")
+    if (q !== null && q !== undefined) {
+      setSearch(q)
+      setTimeFilter("all")
+    }
+  }, [searchParams])
 
   // Filter jobs based on user criteria
   const filteredJobs = React.useMemo(() => {
@@ -64,7 +77,24 @@ export default function AiGenerationsPage() {
       />
 
       {/* Jobs Table & Pagination */}
-      <AiJobsTable jobs={filteredJobs} totalJobsCount={2796} />
+      <AiJobsTable
+        jobs={filteredJobs}
+        totalJobsCount={search ? filteredJobs.length : 2796}
+      />
     </div>
+  )
+}
+
+export default function AiGenerationsPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      }
+    >
+      <AiGenerationsContent />
+    </React.Suspense>
   )
 }
