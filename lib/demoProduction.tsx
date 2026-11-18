@@ -104,10 +104,10 @@ export function mergeProductionOrders(
   if (!storedRaw) return baseOrders
 
   try {
-    const parsed: any = JSON.parse(storedRaw)
+    const parsed: Partial<ProductionOrder>[] = JSON.parse(storedRaw)
     if (!Array.isArray(parsed) || parsed.length === 0) return baseOrders
 
-    const updateMap = new Map<string, any>()
+    const updateMap = new Map<string, Partial<ProductionOrder>>()
     for (const item of parsed) {
       if (!item) continue
       const clean = (item.cleanId || item.id || "").toString().replace("#", "").trim().toLowerCase()
@@ -120,7 +120,7 @@ export function mergeProductionOrders(
       const update = updateMap.get(base.cleanId.toLowerCase())
       if (!update) return base
 
-      let s = update.stage || base.stage
+      let s: string = (update.stage as string) || base.stage
       if (s === "Received") s = "Order Received"
       else if (s === "Preparing artwork") s = "Preparing Artwork"
       else if (s === "Sent to printer" || s === "Order confirmed and logged") s = "Order Confirmed"

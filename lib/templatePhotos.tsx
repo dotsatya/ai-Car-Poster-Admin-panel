@@ -502,7 +502,7 @@ export function getTemplatePrice(
   sizeId: PrintSizeId | string,
   gsmId: PaperGsmId | string
 ): SizeGsmPrice | undefined {
-  return template.pricing?.find((p) => p.size === sizeId && p.gsm === gsmId);
+  return template.pricing?.find((p: SizeGsmPrice) => p.size === sizeId && p.gsm === gsmId);
 }
 
 

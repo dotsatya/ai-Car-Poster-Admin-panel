@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Check, AlertCircle, Package, WandSparkles, ArrowRight, ArrowUpRight } from "lucide-react"
+import { ArrowLeft, Check, Package, WandSparkles, ArrowRight, ArrowUpRight } from "lucide-react"
 import { DemoCustomer } from "@/lib/demoCustomer"
 
 interface CustomerDetailCardProps {

@@ -15,7 +15,6 @@ interface TemplateTableProps {
 
 export function TemplateTable({
   templates,
-  onSelectTemplate,
   onEditTemplate,
 }: TemplateTableProps) {
   const [currentPage, setCurrentPage] = React.useState(1)

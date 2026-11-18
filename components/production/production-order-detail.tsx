@@ -19,7 +19,6 @@ import {
   Mail,
   ChevronDown,
   Check,
-  Save,
 } from "lucide-react"
 
 interface ProductionOrderDetailProps {

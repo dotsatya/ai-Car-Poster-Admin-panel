@@ -1,6 +1,5 @@
 import * as React from "react"
 import Link from "next/link"
-import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { DEMO_AI_JOBS, getDemoAiJobById } from "@/lib/demoAiGenerations"
 import { AiJobDetailCard } from "@/components/ai-generations/ai-job-detail-card"

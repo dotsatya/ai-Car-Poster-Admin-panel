@@ -121,7 +121,7 @@ export function mergeStaffMembers(storedRaw: string | null): StaffMember[] {
   try {
     const parsed = JSON.parse(storedRaw)
     if (!Array.isArray(parsed) || parsed.length === 0) return DEMO_STAFF
-    const map = new Map<string, any>()
+    const map = new Map<string, Partial<StaffMember>>()
     for (const item of parsed) {
       if (!item) continue
       const key = (item.cleanId || item.id || "").toLowerCase()

@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, RefreshCw, ExternalLink } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { AiGenerationJob } from "@/lib/demoAiGenerations"
 
 interface AiJobDetailCardProps {

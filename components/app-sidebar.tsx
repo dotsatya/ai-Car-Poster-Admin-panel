@@ -97,15 +97,6 @@ const navGroups: NavGroup[] = [
   },
 ]
 
-// User profile matching the design
-const data = {
-  user: {
-    name: "Alexander Drake",
-    email: "admin1@gmail.com",
-    avatar: "",
-  },
-}
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
   const activeUser = {

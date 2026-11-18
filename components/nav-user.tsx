@@ -26,7 +26,6 @@ import {
 import {
   ChevronsUpDown,
   BadgeCheck,
-  Bell,
   LogOut,
 } from "lucide-react"
 

@@ -9,7 +9,6 @@ import {
   ExternalLink,
   Download,
   Check,
-  SlidersHorizontal,
   ArrowRight,
   WandSparkles,
   Package,
