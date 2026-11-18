@@ -1,14 +1,24 @@
-"use client"
-
 import * as React from "react"
-import { useParams } from "next/navigation"
-import { getDemoOrderById } from "@/lib/demoOrder"
+import { DEMO_ORDERS, getDemoOrderById } from "@/lib/demoOrder"
 import { OrderDetailCard } from "@/components/orders/order-detail-card"
 
-export default function OrderDetailPage() {
-  const params = useParams()
-  const rawId = (params?.id as string) || "1042"
-  const order = getDemoOrderById(rawId) || getDemoOrderById("1042")!
+export function generateStaticParams() {
+  return DEMO_ORDERS.map((order) => ({
+    id: order.cleanId,
+  }))
+}
 
-  return <OrderDetailCard order={order} />
+export default async function OrderDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const order = getDemoOrderById(id) || getDemoOrderById("1042")!
+
+  return (
+    <React.Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading order details...</div>}>
+      <OrderDetailCard order={order} />
+    </React.Suspense>
+  )
 }

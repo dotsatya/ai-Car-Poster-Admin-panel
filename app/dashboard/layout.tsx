@@ -1,3 +1,4 @@
+import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -11,9 +12,13 @@ export default function DashboardLayout({
   return (
     <AuthGuard>
       <SidebarProvider>
-        <AppSidebar />
+        <React.Suspense fallback={<div className="w-64 bg-sidebar" />}>
+          <AppSidebar />
+        </React.Suspense>
         <SidebarInset>
-          <DashboardHeader />
+          <React.Suspense fallback={<header className="h-16 border-b border-border/80 bg-background/95 px-6" />}>
+            <DashboardHeader />
+          </React.Suspense>
           <main className="flex flex-1 flex-col gap-6 p-6">
             {children}
           </main>

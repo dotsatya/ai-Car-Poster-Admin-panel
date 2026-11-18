@@ -1,69 +1,84 @@
-import { Search, Mail, MapPin } from "lucide-react"
+"use client"
+
+import * as React from "react"
+import { DEMO_CUSTOMERS } from "@/lib/demoCustomer"
+import { CustomerHeader } from "@/components/customers/customer-header"
+import { CustomerFilters } from "@/components/customers/customer-filters"
+import { CustomerListTable } from "@/components/customers/customer-list-table"
 
 export default function CustomersPage() {
-  const customers = [
-    { name: "Liam Vance", email: "liam.vance@example.com", location: "Los Angeles, CA", ordersCount: 6, totalSpent: "$294.00" },
-    { name: "Sophia Chen", email: "sophia.chen@example.com", location: "Vancouver, BC", ordersCount: 4, totalSpent: "$182.00" },
-    { name: "Marcus Miller", email: "marcus.m@example.com", location: "London, UK", ordersCount: 12, totalSpent: "$680.00" },
-    { name: "Elena Rostova", email: "e.rostova@example.com", location: "Berlin, DE", ordersCount: 3, totalSpent: "$145.00" },
-    { name: "Noah Patel", email: "noah.patel@example.com", location: "Austin, TX", ordersCount: 8, totalSpent: "$412.00" },
-  ]
+  const [search, setSearch] = React.useState("")
+  const [accountFilter, setAccountFilter] = React.useState("all")
+  const [sortBy, setSortBy] = React.useState("recent")
+
+  // Filter and sort customers
+  const filteredCustomers = React.useMemo(() => {
+    return DEMO_CUSTOMERS.filter((cust) => {
+      // 1. Search filter
+      const q = search.trim().toLowerCase()
+      if (q) {
+        const matchesName = cust.name.toLowerCase().includes(q)
+        const matchesEmail = cust.email.toLowerCase().includes(q)
+        if (!matchesName && !matchesEmail) return false
+      }
+
+      // 2. Account status filter
+      if (accountFilter !== "all") {
+        if (cust.account.toLowerCase() !== accountFilter.toLowerCase()) {
+          return false
+        }
+      }
+
+      return true
+    }).sort((a, b) => {
+      if (sortBy === "posters") return b.posters - a.posters
+      if (sortBy === "orders") {
+        const aOrd = a.orders ?? a.ordersList?.length ?? 0
+        const bOrd = b.orders ?? b.ordersList?.length ?? 0
+        return bOrd - aOrd
+      }
+      return 0 // default order matching the mock dataset
+    })
+  }, [search, accountFilter, sortBy])
+
+  // Export filtered customers as clean CSV
+  function handleExportCSV() {
+    const headers = ["Customer", "Email", "Account", "Posters", "Orders", "Joined"]
+    const rows = filteredCustomers.map(
+      (c) =>
+        `"${c.name}","${c.email}","${c.account}",${c.posters},${c.orders ?? c.ordersList?.length ?? 0},"${c.joined}"`
+    )
+    const csvContent =
+      "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n")
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute(
+      "download",
+      `poster_gen_customers_${new Date().toISOString().slice(0, 10)}.csv`
+    )
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
-          Customers
-        </h1>
-        <p className="text-sm font-normal text-muted-foreground mt-1">
-          Customer directory, order frequencies, and lifetime buyer value.
-        </p>
-      </div>
+      {/* Page Header */}
+      <CustomerHeader onExportCSV={handleExportCSV} />
 
-      <div className="rounded-md border border-border/80 bg-card text-card-foreground shadow-sm overflow-hidden">
-        <div className="p-3.5 border-b border-border/60 flex items-center gap-2.5 bg-card/60">
-          <Search className="size-4 text-muted-foreground" />
-          <input
-            placeholder="Search customers by name or email..."
-            className="w-full bg-transparent text-sm font-normal outline-none placeholder:text-muted-foreground/70"
-          />
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border/60 bg-muted/30 text-muted-foreground text-left">
-              <tr>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Customer</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Contact</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Location</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Total Orders</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Lifetime Spend</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
-              {customers.map((cust) => (
-                <tr key={cust.email} className="hover:bg-secondary/40 transition-colors">
-                  <td className="p-4 font-medium text-foreground">{cust.name}</td>
-                  <td className="p-4 font-normal text-muted-foreground flex items-center gap-1.5 pt-4">
-                    <Mail className="size-3.5 text-muted-foreground/70" />
-                    <span>{cust.email}</span>
-                  </td>
-                  <td className="p-4 font-normal text-muted-foreground">
-                    <span className="inline-flex items-center gap-1">
-                      <MapPin className="size-3.5 text-muted-foreground/70" /> {cust.location}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-mono font-medium text-foreground/90">
-                      {cust.ordersCount} posters
-                    </span>
-                  </td>
-                  <td className="p-4 font-semibold tracking-tight text-foreground">{cust.totalSpent}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Filter Bar */}
+      <CustomerFilters
+        search={search}
+        onSearchChange={setSearch}
+        accountFilter={accountFilter}
+        onAccountFilterChange={setAccountFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+      />
+
+      {/* Customer List Table & Pagination */}
+      <CustomerListTable customers={filteredCustomers} />
     </div>
   )
 }

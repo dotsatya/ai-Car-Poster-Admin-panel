@@ -124,7 +124,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <span className="text-lg font-semibold tracking-tight">
                   P<span className="text-primary">G</span>
                 </span>
-                <span className="absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-primary" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate text-base font-semibold tracking-wide text-foreground">

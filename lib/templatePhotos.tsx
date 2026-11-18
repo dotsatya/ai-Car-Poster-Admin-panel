@@ -67,6 +67,17 @@ export interface TemplatePhoto extends RawTemplatePhoto {
   pricing: SizeGsmPrice[];
   startingPrice: number;
   formattedStartingPrice: string;
+  status?: "Published" | "Draft" | "Archived";
+  price?: number;
+  formattedPrice?: string;
+  eligibleSizes?: string[];
+  allowCustomerText?: boolean;
+  maxCustomerTextChars?: number;
+  masterAsset?: string;
+  masterFileName?: string;
+  thumbFileName?: string;
+  usedInOrders?: number;
+  lastEdited?: string;
 }
 
 interface TemplateConfig {
@@ -155,6 +166,13 @@ function attachTemplateOptions(raw: RawTemplatePhoto): TemplatePhoto {
   const startingPrice = Math.min(...pricing.map((p) => p.price));
   const formattedStartingPrice = `₹${startingPrice.toLocaleString("en-IN")}`;
 
+  const filenameBase = raw.slug || `template-${raw.id}`;
+  const price = 32.0;
+  const eligibleSizes =
+    raw.id === 2
+      ? ["12 × 18 in", "18 × 24 in", "24 × 36 in"]
+      : ["8 × 10 in", "12 × 18 in", "18 × 24 in", "24 × 36 in"];
+
   return {
     ...raw,
     availableSizes,
@@ -162,6 +180,17 @@ function attachTemplateOptions(raw: RawTemplatePhoto): TemplatePhoto {
     pricing,
     startingPrice,
     formattedStartingPrice,
+    status: "Published",
+    price,
+    formattedPrice: `$${price.toFixed(2)}`,
+    eligibleSizes,
+    allowCustomerText: true,
+    maxCustomerTextChars: 30,
+    masterAsset: raw.src,
+    masterFileName: `${filenameBase}-master.png`,
+    thumbFileName: `${filenameBase}-thumb.webp`,
+    usedInOrders: raw.id === 2 ? 128 : raw.id * 7 + 12,
+    lastEdited: raw.id === 2 ? "12 Nov by Riya" : "15 Nov by Riya",
   };
 }
 

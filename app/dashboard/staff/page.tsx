@@ -1,12 +1,13 @@
-import { Plus, ShieldCheck, Mail } from "lucide-react"
+"use client"
+
+import * as React from "react"
+import { useRouter } from "next/navigation"
+import { Plus, ShieldCheck, Mail, Phone } from "lucide-react"
+import { DEMO_STAFF } from "@/lib/demoStaff"
 
 export default function StaffPage() {
-  const staff = [
-    { name: "Alexander Drake", email: "alex@carposters.io", role: "Administrator", status: "Active", permissions: "Full Studio Access" },
-    { name: "Elena Santos", email: "elena@carposters.io", role: "Lead Automotive Designer", status: "Active", permissions: "Templates & Typography" },
-    { name: "Kenji Sato", email: "kenji@carposters.io", role: "AI Vision Engineer", status: "Active", permissions: "Neural Models & Upscaler" },
-    { name: "David Kim", email: "david@carposters.io", role: "Print Master", status: "Active", permissions: "Fulfillment & Materials" },
-  ]
+  const router = useRouter()
+  const staff = DEMO_STAFF
 
   return (
     <div className="flex flex-col gap-6">
@@ -19,7 +20,10 @@ export default function StaffPage() {
             Manage staff credentials, designer permissions, and system roles.
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors">
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors cursor-pointer"
+        >
           <Plus className="size-4" /> Add Team Member
         </button>
       </div>
@@ -29,16 +33,20 @@ export default function StaffPage() {
           <table className="w-full text-sm">
             <thead className="border-b border-border/60 bg-muted/30 text-muted-foreground text-left">
               <tr>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Team Member</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Role</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Permissions</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em]">Status</th>
-                <th className="p-4 font-medium text-xs uppercase tracking-[0.03em] text-right">Actions</th>
+                <th className="p-4 font-medium text-xs text-muted-foreground">Team Member</th>
+                <th className="p-4 font-medium text-xs text-muted-foreground">Role</th>
+                <th className="p-4 font-medium text-xs text-muted-foreground">Permissions</th>
+                <th className="p-4 font-medium text-xs text-muted-foreground">Status</th>
+                <th className="p-4 font-medium text-xs text-muted-foreground">Last sign in</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
               {staff.map((member) => (
-                <tr key={member.email} className="hover:bg-secondary/40 transition-colors">
+                <tr
+                  key={member.email}
+                  onClick={() => router.push(`/dashboard/staff/${member.cleanId}`)}
+                  className="hover:bg-secondary/40 transition-colors cursor-pointer"
+                >
                   <td className="p-4">
                     <p className="font-medium text-foreground">{member.name}</p>
                     <p className="text-xs font-normal text-muted-foreground flex items-center gap-1.5 mt-0.5">
@@ -52,7 +60,9 @@ export default function StaffPage() {
                   </td>
                   <td className="p-4 text-muted-foreground flex items-center gap-1.5 pt-5">
                     <ShieldCheck className="size-4 text-primary" />
-                    <span className="text-xs font-normal text-foreground/80">{member.permissions}</span>
+                    <span className="text-xs font-normal text-foreground/80">
+                      {member.permissionsSummary}
+                    </span>
                   </td>
                   <td className="p-4">
                     <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400">
@@ -60,10 +70,10 @@ export default function StaffPage() {
                       {member.status}
                     </span>
                   </td>
-                  <td className="p-4 text-right">
-                    <button className="text-xs text-primary font-medium hover:underline">
-                      Edit Permissions
-                    </button>
+                  <td className="p-4">
+                    <span className="font-semibold text-foreground text-sm">
+                      {member.lastSignIn}
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -74,3 +84,4 @@ export default function StaffPage() {
     </div>
   )
 }
+

@@ -77,8 +77,8 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
       {/* Main Order Card */}
       <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-6">
         {/* Top Header Row */}
-        <div className="flex items-center justify-between border-b border-border/40 pb-4">
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+        <div className="flex items-center justify-between pb-2">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Order {order.id}
           </h1>
           <div className="flex items-center gap-2">
@@ -100,10 +100,10 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
         </div>
 
         {/* Customer / Shipping / Payment Metadata: 3 Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
           {/* Customer */}
           <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground">
+            <span className="text-xs font-normal text-muted-foreground block">
               Customer
             </span>
             <p className="text-sm font-medium text-foreground leading-tight">
@@ -116,10 +116,10 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
 
           {/* Ship to */}
           <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground">
+            <span className="text-xs font-normal text-muted-foreground block">
               Ship to
             </span>
-            <p className="text-sm font-normal text-foreground leading-tight">
+            <p className="text-sm font-medium text-foreground leading-tight">
               {order.shipping.address}
             </p>
             <p className="text-sm font-normal text-muted-foreground">
@@ -129,10 +129,10 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
 
           {/* Payment */}
           <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground">
+            <span className="text-xs font-normal text-muted-foreground block">
               Payment
             </span>
-            <p className="text-sm font-normal text-foreground leading-tight">
+            <p className="text-sm font-medium text-foreground leading-tight">
               Stripe ref {order.payment.stripeRef}
             </p>
             <a
@@ -236,14 +236,14 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
           </div>
 
           {/* Subtotal / Shipping / Total Line */}
-          <div className="flex items-center justify-end gap-6 pt-5 pb-2 text-sm border-b border-border/40">
-            <span className="font-normal text-foreground">
-              Subtotal <span className="font-medium">{order.subtotal}</span>
+          <div className="flex items-center justify-end gap-6 pt-5 pb-1 text-sm">
+            <span className="font-normal text-muted-foreground">
+              Subtotal <span className="font-normal text-foreground">{order.subtotal}</span>
             </span>
-            <span className="font-normal text-foreground">
-              Shipping <span className="font-medium">{order.shippingFee}</span>
+            <span className="font-normal text-muted-foreground">
+              Shipping <span className="font-normal text-foreground">{order.shippingFee}</span>
             </span>
-            <span className="font-semibold text-foreground text-base">
+            <span className="font-bold text-foreground text-sm sm:text-base ml-2">
               Total {order.total}
             </span>
           </div>
@@ -253,19 +253,15 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
           {/* Status history */}
           <div className="space-y-2">
-            <span className="text-xs font-normal text-muted-foreground block mb-2">
+            <span className="text-xs font-normal text-muted-foreground block mb-3">
               Status history
             </span>
             <div className="space-y-2">
               {order.statusHistory.map((step, idx) => (
-                <div
-                  key={idx}
-                  className="text-sm font-medium text-foreground flex items-center gap-2"
-                >
-                  <span className="size-1.5 rounded-full bg-primary/80 shrink-0" />
-                  <span>
-                    {step.time} · {step.label}
-                  </span>
+                <div key={idx} className="text-sm">
+                  <span className="font-semibold text-foreground">{step.time}</span>
+                  <span className="text-muted-foreground/80"> · </span>
+                  <span className="font-normal text-muted-foreground">{step.label}</span>
                 </div>
               ))}
             </div>

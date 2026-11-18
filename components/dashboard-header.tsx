@@ -28,7 +28,19 @@ const routeTitles: Record<string, { section: string; title: string }> = {
 
 export function DashboardHeader() {
   const pathname = usePathname()
-  const current = routeTitles[pathname] || { section: "Overview", title: "Dashboard" }
+  let current = routeTitles[pathname]
+  if (!current && pathname?.startsWith("/dashboard/orders/")) {
+    current = { section: "Commerce", title: "Order Details" }
+  } else if (!current && pathname?.startsWith("/dashboard/customers/")) {
+    current = { section: "Commerce", title: "Customer Details" }
+  } else if (!current && pathname?.startsWith("/dashboard/ai-generations/")) {
+    current = { section: "Operations", title: "Job Details" }
+  } else if (!current && pathname?.startsWith("/dashboard/staff/")) {
+    current = { section: "Management", title: "Staff Member" }
+  }
+  if (!current) {
+    current = { section: "Overview", title: "Dashboard" }
+  }
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/80 bg-background/95 backdrop-blur px-6">

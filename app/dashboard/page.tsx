@@ -2,42 +2,134 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Calendar } from "lucide-react"
+import { Calendar, ChevronDown } from "lucide-react"
 
 export default function DashboardPage() {
   const router = useRouter()
-  const kpis = [
-    {
-      title: "Total customers",
-      value: "1,284",
-      delta: "+42 this week",
-    },
-    {
-      title: "Paid orders",
-      value: "356",
-      delta: "+18 this week",
-    },
-    {
-      title: "Total revenue",
-      value: "$14,920",
-      delta: "+6.2%",
-    },
-    {
-      title: "Individual generations",
-      value: "2,310",
-      delta: "+120 this week",
-    },
-    {
-      title: "Combined generations",
-      value: "486",
-      delta: "+31 this week",
-    },
-    {
-      title: "Average order value",
-      value: "$41.90",
-      delta: "+1.4%",
-    },
+  const [selectedRange, setSelectedRange] = React.useState<string>("30d")
+
+  const timeRanges = [
+    { id: "1y", label: "Last 1 year" },
+    { id: "6m", label: "Last 6 mon" },
+    { id: "30d", label: "Last 30 days" },
+    { id: "1w", label: "Last week" },
   ]
+
+  const kpisByRange: Record<
+    string,
+    Array<{ title: string; value: string; delta: string }>
+  > = {
+    "1y": [
+      {
+        title: "Total Customers",
+        value: "11,420",
+        delta: "+24.6% vs prior year",
+      },
+      {
+        title: "Total Revenue",
+        value: "$164,280",
+        delta: "+21.4% vs prior year",
+      },
+      {
+        title: "Total AI Generations",
+        value: "32,150",
+        delta: "+18.2% vs prior year",
+      },
+      {
+        title: "Total Orders",
+        value: "3,980",
+        delta: "+19.2% vs prior year",
+      },
+      {
+        title: "Average Order Value",
+        value: "$41.28",
+        delta: "+2.8%",
+      },
+    ],
+    "6m": [
+      {
+        title: "Total Customers",
+        value: "5,840",
+        delta: "+18.5% vs prior 6m",
+      },
+      {
+        title: "Total Revenue",
+        value: "$78,450",
+        delta: "+14.2% vs prior 6m",
+      },
+      {
+        title: "Total AI Generations",
+        value: "14,820",
+        delta: "+12.4% vs prior 6m",
+      },
+      {
+        title: "Total Orders",
+        value: "1,890",
+        delta: "+11.8% vs prior 6m",
+      },
+      {
+        title: "Average Order Value",
+        value: "$41.50",
+        delta: "+2.1%",
+      },
+    ],
+    "30d": [
+      {
+        title: "Total Customers",
+        value: "1,284",
+        delta: "+42 this week",
+      },
+      {
+        title: "Total Revenue",
+        value: "$14,920",
+        delta: "+6.2%",
+      },
+      {
+        title: "Total AI Generations",
+        value: "2,796",
+        delta: "+151 this week",
+      },
+      {
+        title: "Total Orders",
+        value: "356",
+        delta: "+18 this week",
+      },
+      {
+        title: "Average Order Value",
+        value: "$41.90",
+        delta: "+1.4%",
+      },
+    ],
+    "1w": [
+      {
+        title: "Total Customers",
+        value: "210",
+        delta: "+18 vs prev week",
+      },
+      {
+        title: "Total Revenue",
+        value: "$3,860",
+        delta: "+9.4% vs prev week",
+      },
+      {
+        title: "Total AI Generations",
+        value: "642",
+        delta: "+48 vs prev week",
+      },
+      {
+        title: "Total Orders",
+        value: "92",
+        delta: "+8 vs prev week",
+      },
+      {
+        title: "Average Order Value",
+        value: "$41.95",
+        delta: "+0.8%",
+      },
+    ],
+  }
+
+  const kpis = kpisByRange[selectedRange] || kpisByRange["30d"]
 
   // Order status data styled with brand harmony
   const orderStatuses = [
@@ -85,7 +177,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Top Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Dashboard
@@ -94,27 +186,70 @@ export default function DashboardPage() {
             Automotive atelier performance, generative render pipeline, and order fulfillment.
           </p>
         </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
-        >
-          <Calendar className="size-3.5 text-primary" />
-          <span>Last 30 days</span>
-        </button>
+
+        {/* Date Filter: Last 1 year, Last 6 mon, Last 30 days, Last week */}
+        <div className="flex items-center gap-1.5 self-start sm:self-auto">
+          {/* Segmented Pill Switcher for Tablet & Desktop */}
+          <div className="hidden sm:inline-flex items-center rounded-md border border-border/80 bg-card/80 p-1 shadow-sm">
+            {timeRanges.map((range) => {
+              const isActive = selectedRange === range.id
+              return (
+                <button
+                  key={range.id}
+                  type="button"
+                  onClick={() => setSelectedRange(range.id)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  }`}
+                >
+                  {range.label}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Compact Select Dropdown for Mobile Viewports */}
+          <div className="relative sm:hidden">
+            <select
+              value={selectedRange}
+              onChange={(e) => setSelectedRange(e.target.value)}
+              className="appearance-none rounded-md border border-border/80 bg-card/80 pl-8 pr-8 py-1.5 text-xs font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer shadow-sm"
+            >
+              {timeRanges.map((range) => (
+                <option
+                  key={range.id}
+                  value={range.id}
+                  className="bg-[#121315] text-foreground"
+                >
+                  {range.label}
+                </option>
+              ))}
+            </select>
+            <Calendar className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-primary" />
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 size-3 text-muted-foreground/70" />
+          </div>
+        </div>
       </div>
 
-      {/* KPI Cards: 2 rows of 3 columns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 5 KPI Cards in a single horizontal row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {kpis.map((kpi) => (
           <div
             key={kpi.title}
-            className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm hover:border-primary/30 transition-colors"
+            className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm hover:border-primary/30 transition-colors flex flex-col justify-between h-full"
           >
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-[0.03em]">
-              {kpi.title}
-            </span>
-            <div className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mt-2">
-              {kpi.value}
+            <div>
+              <span
+                title={kpi.title}
+                className="text-xs font-medium text-muted-foreground uppercase tracking-[0.03em] block truncate"
+              >
+                {kpi.title}
+              </span>
+              <div className="text-2xl lg:text-[1.65rem] xl:text-3xl font-semibold tracking-tight text-foreground mt-2">
+                {kpi.value}
+              </div>
             </div>
             <p className="text-xs font-normal text-emerald-400 mt-1.5 flex items-center gap-1">
               <span>{kpi.delta}</span>

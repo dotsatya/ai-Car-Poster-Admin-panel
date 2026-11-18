@@ -7,9 +7,14 @@ import { TemplateCard } from "./template-card"
 interface TemplateGridProps {
   templates: TemplatePhoto[]
   onSelectTemplate?: (template: TemplatePhoto) => void
+  onEditTemplate?: (template: TemplatePhoto) => void
 }
 
-export function TemplateGrid({ templates, onSelectTemplate }: TemplateGridProps) {
+export function TemplateGrid({
+  templates,
+  onSelectTemplate,
+  onEditTemplate,
+}: TemplateGridProps) {
   if (templates.length === 0) {
     return (
       <div className="rounded-md border border-border/80 bg-card p-12 text-center text-muted-foreground">
@@ -25,6 +30,7 @@ export function TemplateGrid({ templates, onSelectTemplate }: TemplateGridProps)
           key={tpl.id}
           template={tpl}
           onSelect={onSelectTemplate}
+          onEdit={onEditTemplate}
         />
       ))}
     </div>

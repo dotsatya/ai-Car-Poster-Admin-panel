@@ -7,10 +7,13 @@ import { TemplatePhoto } from "@/lib/templatePhotos"
 interface TemplateCardProps {
   template: TemplatePhoto
   onSelect?: (template: TemplatePhoto) => void
+  onEdit?: (template: TemplatePhoto) => void
 }
 
-export function TemplateCard({ template, onSelect }: TemplateCardProps) {
-  const [isConfiguring, setIsConfiguring] = React.useState(false)
+export function TemplateCard({ template, onSelect, onEdit }: TemplateCardProps) {
+  const displayPrice = template.price !== undefined
+    ? `$${template.price.toFixed(2)}`
+    : template.formattedStartingPrice || "$32.00"
 
   return (
     <div className="group relative flex flex-col justify-between rounded-md border border-border/80 bg-card text-card-foreground shadow-sm transition-all duration-200 hover:border-primary/40 hover:shadow-md hover:shadow-red-950/20 overflow-hidden">
@@ -20,6 +23,7 @@ export function TemplateCard({ template, onSelect }: TemplateCardProps) {
           src={template.src}
           alt={template.name}
           fill
+          unoptimized
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -30,17 +34,29 @@ export function TemplateCard({ template, onSelect }: TemplateCardProps) {
           <span className="inline-flex items-center gap-1 rounded-md bg-black/75 backdrop-blur-md border border-white/10 px-2 py-0.5 text-[10px] font-medium text-foreground">
             {template.category}
           </span>
-          {template.tag ? (
-            <span className="inline-flex items-center gap-1 rounded-md bg-primary/20 backdrop-blur-md border border-primary/40 px-2 py-0.5 text-[10px] font-medium text-primary">
-              {template.tag}
-            </span>
-          ) : null}
+          <div className="flex items-center gap-1.5">
+            {template.status === "Draft" ? (
+              <span className="inline-flex items-center gap-1 rounded-md bg-amber-950/80 backdrop-blur-md border border-amber-800/60 px-2 py-0.5 text-[10px] font-medium text-amber-400">
+                Draft
+              </span>
+            ) : template.status === "Archived" ? (
+              <span className="inline-flex items-center gap-1 rounded-md bg-zinc-900/80 backdrop-blur-md border border-zinc-700/60 px-2 py-0.5 text-[10px] font-medium text-zinc-400">
+                Archived
+              </span>
+            ) : null}
+
+            {template.tag ? (
+              <span className="inline-flex items-center gap-1 rounded-md bg-primary/20 backdrop-blur-md border border-primary/40 px-2 py-0.5 text-[10px] font-medium text-primary">
+                {template.tag}
+              </span>
+            ) : null}
+          </div>
         </div>
 
         {/* Bottom Price on Image */}
         <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between">
           <span className="text-xs font-mono font-semibold text-white drop-shadow-sm">
-            {template.formattedStartingPrice}
+            {displayPrice}
           </span>
           <span className="text-[10px] font-medium text-zinc-300 bg-black/60 px-1.5 py-0.5 rounded-sm">
             300 DPI
@@ -60,18 +76,27 @@ export function TemplateCard({ template, onSelect }: TemplateCardProps) {
 
           {/* Available Sizes Pills */}
           <div className="flex flex-wrap items-center gap-1.5 mt-3">
-            {template.availableSizes?.map((s) => (
-              <span
-                key={s.id}
-                className="rounded-sm bg-secondary/80 border border-border/60 px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground"
-              >
-                {s.name}
-              </span>
-            ))}
+            {template.eligibleSizes && template.eligibleSizes.length > 0
+              ? template.eligibleSizes.map((sizeName) => (
+                  <span
+                    key={sizeName}
+                    className="rounded-sm bg-secondary/80 border border-border/60 px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground"
+                  >
+                    {sizeName}
+                  </span>
+                ))
+              : template.availableSizes?.map((s) => (
+                  <span
+                    key={s.id}
+                    className="rounded-sm bg-secondary/80 border border-border/60 px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground"
+                  >
+                    {s.name}
+                  </span>
+                ))}
           </div>
         </div>
 
-        {/* Footer Actions */}
+        {/* Footer Actions: Edit button */}
         <div className="flex items-center justify-between pt-3 mt-3 border-t border-border/40 text-xs">
           <span className="text-muted-foreground text-[11px] font-normal">
             {template.availableGsm?.length || 3} Paper Finishes
@@ -79,12 +104,12 @@ export function TemplateCard({ template, onSelect }: TemplateCardProps) {
           <button
             type="button"
             onClick={() => {
-              setIsConfiguring(!isConfiguring)
+              onEdit?.(template)
               onSelect?.(template)
             }}
-            className="rounded-md bg-secondary text-foreground hover:bg-primary/20 hover:text-primary hover:border-primary/40 border border-border/60 px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer"
+            className="rounded-md bg-secondary text-foreground hover:bg-primary/20 hover:text-primary hover:border-primary/40 border border-border/60 px-3 py-1 text-xs font-medium transition-colors cursor-pointer"
           >
-            {isConfiguring ? "Configured" : "Configure"}
+            Edit
           </button>
         </div>
       </div>

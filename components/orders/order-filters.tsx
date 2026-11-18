@@ -35,7 +35,7 @@ export function OrderFilters({
   return (
     <div className="flex flex-col gap-3">
       {/* All 4 filters arranged in one single row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         {/* 1. Search Input */}
         <div className="relative">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/60" />

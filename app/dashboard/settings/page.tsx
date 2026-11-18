@@ -17,7 +17,7 @@ export default function AccountSettingsPage() {
         </button>
       </div>
 
-      <div className="grid gap-6 max-w-4xl">
+      <div className="grid gap-6 w-full">
         <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/60">
             <User className="size-4 text-primary" />
