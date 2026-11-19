@@ -32,6 +32,10 @@ Crafted with a bespoke **Dark Automotive Atelier** aesthetic (`#0b0c0e` carbon b
   - [8. Management — Reports \& Business Intelligence](#8-management--reports--business-intelligence)
   - [9. Store Settings \& System Controls](#9-store-settings--system-controls)
 - [🎨 Design Language \& Atelier UI Philosophy](#-design-language--atelier-ui-philosophy)
+  - [Standardized Button Hierarchy](#standardized-button-hierarchy)
+  - [Interactive "Click to Edit" Input Model](#interactive-click-to-edit-input-model)
+  - [Mobile \& Tablet Adaptive Responsive Architecture](#mobile--tablet-adaptive-responsive-architecture)
+  - [Streamlined Header Navigation](#streamlined-header-navigation)
 - [🛠️ Technical Stack \& Architecture](#️-technical-stack--architecture)
 - [📂 Project Directory Structure](#-project-directory-structure)
 - [🚀 Quickstart \& Installation](#-quickstart--installation)
@@ -66,21 +70,27 @@ End-to-end commercial transaction lifecycle management:
 Deep client profile insights and activity tracking:
 - **Client Ledger**: Tracks lifetime spend, total orders placed, AI prompt iterations, and account status (*Active* vs. *Disabled*).
 - **Customer Detail Profile**:
-  - Contact metadata, registered dates, and default delivery addresses.
+  - Prominent customer email identifier header with verification badge (*Verified* / *Unverified*) and account state indicator (*Active* / *Disabled*).
+  - Dedicated **Customer Information & Shipping Address** card: Customer full name, ID, email, telephone, full street address, apartment/suite, city, state, zip code, and country with geolocation icon (`MapPin`).
   - Linked generation gallery showcasing the user's generated car art.
   - Complete order history with one-click navigation to fulfillment.
   - Account status controls with deactivation and reactivation confirmation workflows.
 - **CSV Data Export**: Single-click client book export for marketing campaigns and VIP outreach.
 
-### 4. Commerce — Templates Atelier (`/dashboard/templates`)
+### 4. Commerce — Templates Atelier (`/dashboard/templates`, `/dashboard/templates/[id]`)
 Curate, configure, and maintain the poster design catalog:
 - **Visual Catalog Grid**: High-resolution gallery previewing template aesthetics, tags, and category taxonomies.
-- **Interactive Template Modal**:
-  - Add new design templates or edit existing master styles.
-  - Configure supported print dimensions: `A4`, `A3`, `12x18 in`, `A2` (all calibrated to 300 DPI).
+- **Dedicated Template Details Page (`/dashboard/templates/[id]`)**:
+  - Full-screen atelier workspace replacing legacy modal overlays.
+  - High-resolution master asset inspection (300 DPI Archival) with one-click master file replacement and WebP thumbnail updates.
+  - Editable metadata: Template Name, Vehicle Model, Tag taxonomy, Category selector, and Unit Pricing with "Click to edit" interaction.
+  - Instant status switches: *Publish to Storefront*, *Revert to Draft*, or *Move to Archive*.
+  - Direct navigation back to the templates catalog with synchronized breadcrumbs.
+- **Interactive Template Modal**: Quick creation modal for drafting new template additions.
+- **Supported Specifications**:
+  - Print dimensions: `A4`, `A3`, `12x18 in`, `A2` (calibrated to 300 DPI archival fidelity).
   - Paper GSM compatibility toggles (200 GSM Heavyweight, 250 GSM Satin, 300 GSM Museum Archival).
   - Custom customer typography slot rules (Header, Subtitle, Chassis/VIN stamp).
-  - Publish, unpublish, and archival workflows.
 
 ### 5. Operations — 8-Stage Production Pipeline (`/dashboard/production`, `/dashboard/production/[id]`)
 Archival print fulfillment and physical workshop orchestration:
@@ -161,6 +171,23 @@ To guarantee consistent visual rhythm, buttons adhere to strict functional categ
 - **Filter Pills**: Active highlighted state vs. muted outline state.
 - **Pagination Controls**: Standardized previous/next buttons and active page indicator.
 
+### Interactive "Click to Edit" Input Model
+Input fields throughout the portal implement an intelligent atelier editing model:
+- **Inactive State**: Displays a subtle `"Click to edit"` hint on the right side of the field without cluttering the input value.
+- **Active State (`:focus`)**: The hint automatically disappears while input padding collapses smoothly (`focus:pr-3.5`), giving the user 100% of the available input width for frictionless typing without awkward layout shifts.
+
+### Mobile & Tablet Adaptive Responsive Architecture
+Every dashboard view and workflow has been rigorously engineered for smartphones, tablets, and desktop workstations:
+- **2-in-a-Row Responsive Layouts**: KPI metric cards, filter control bars (Orders, Customers, AI Generations), and form fields automatically rebalance into balanced `grid grid-cols-2` configurations on small viewports rather than sprawling vertical 1-column stacks.
+- **Device-Aware Controls**: Long horizontal segmented pill button groups gracefully hide on mobile and tablet screens in favor of clean, space-efficient native selectors, while retaining full multi-pill visibility on desktop viewports (`hidden lg:inline-flex`).
+- **Touch-Optimized Data Tables**: Standardized `overflow-x-auto` wrappers paired with `whitespace-nowrap` text cells protect table integrity on narrow viewports without clipping or text overlapping.
+- **Mobile Drawer Auto-Close**: Sidebar navigation automatically dismisses upon tapping menu links on mobile screens to maintain screen real estate.
+
+### Streamlined Header Navigation
+Top-level breadcrumb navigation follows a concise, focused convention:
+- Primary workspace routes display clean titles (`Dashboard`, `Orders`, `Customers`, `Templates`, etc.) without redundant parent labels.
+- Sub-detail pages provide direct, clickable single-tier breadcrumb navigation back to the parent module (`Templates > Template Details`, `Orders > Order Details`, `Customers > Customer Details`).
+
 ---
 
 ## 🛠️ Technical Stack & Architecture
@@ -207,6 +234,7 @@ poster-gen-admin/
 │   │   ├── store-settings/         # Atelier identity, emergency killswitch & limits
 │   │   │   └── page.tsx            # Tabbed store operations management
 │   │   ├── templates/              # Fine art poster catalog & specs atelier
+│   │   │   ├── [id]/page.tsx       # Dedicated template details editor & master asset inspector
 │   │   │   └── page.tsx            # Catalog grid, filter pills & creation modal
 │   │   ├── layout.tsx              # Shell with AppSidebar, Header, & AuthGuard
 │   │   └── page.tsx                # Main overview dashboard
@@ -225,7 +253,7 @@ poster-gen-admin/
 │   ├── orders/                     # Orders data table, filter strip, & detail card
 │   ├── production/                 # Pipeline stepper, artwork card, & carrier card
 │   ├── staff/                      # Staff table & detail permission views
-│   ├── templates/                  # Template card & comprehensive creation modal
+│   ├── templates/                  # Template card, detail card & comprehensive creation modal
 │   ├── ui/                         # Standardized design system primitives
 │   ├── app-sidebar.tsx             # Collapsible primary atelier sidebar navigation
 │   ├── auth-guard.tsx              # Route protection client guard
@@ -304,7 +332,7 @@ npm run build
 npm run start
 ```
 
-All 179+ static and dynamic routes compile cleanly with zero errors. All search-parameter dependent pages are properly wrapped in React Suspense boundaries for Next.js 16 static optimization.
+All 208 static and dynamic routes compile cleanly with zero errors. All search-parameter dependent pages are properly wrapped in React Suspense boundaries for Next.js 16 static optimization.
 
 ---
 

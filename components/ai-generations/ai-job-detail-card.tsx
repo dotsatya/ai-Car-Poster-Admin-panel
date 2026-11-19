@@ -50,7 +50,7 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
       </div>
 
       {/* Main Job Card */}
-      <div className="rounded-md border border-border/80 bg-card p-6 sm:p-7 text-card-foreground shadow-sm space-y-6">
+      <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 lg:p-7 text-card-foreground shadow-sm space-y-6">
         {/* Top Header Row: Job #G-8830 and Type / State badges */}
         <div className="flex items-center justify-between pb-1">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
@@ -76,31 +76,31 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
           </div>
         </div>
 
-        {/* 3-Column Metadata Row: Customer, Template, Custom text */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-1">
+        {/* 3-Column Metadata Row (2 in a row on mobile): Customer, Template, Custom text */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 pt-1">
           <div>
-            <span className="text-xs text-muted-foreground block mb-1">
+            <span className="text-xs text-muted-foreground block mb-1 truncate">
               Customer
             </span>
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-xs sm:text-sm font-semibold text-foreground truncate block">
               {job.customer}
             </span>
           </div>
 
           <div>
-            <span className="text-xs text-muted-foreground block mb-1">
+            <span className="text-xs text-muted-foreground block mb-1 truncate">
               Template
             </span>
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-xs sm:text-sm font-semibold text-foreground truncate block">
               {job.template || job.templates}
             </span>
           </div>
 
-          <div>
-            <span className="text-xs text-muted-foreground block mb-1">
+          <div className="col-span-2 sm:col-span-1">
+            <span className="text-xs text-muted-foreground block mb-1 truncate">
               Custom text
             </span>
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-xs sm:text-sm font-semibold text-foreground truncate block">
               {job.customText || "Not used"}
             </span>
           </div>

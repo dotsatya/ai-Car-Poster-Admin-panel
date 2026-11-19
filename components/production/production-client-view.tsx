@@ -158,7 +158,7 @@ export function ProductionClientView() {
       </div>
 
       {/* KPI Cards (All 8 Stages in Responsive Grid with Live Order Counts) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-2.5">
         {kpis.map((kpi) => {
           const isActive = stageFilter === kpi.stageKey
           return (
@@ -168,16 +168,16 @@ export function ProductionClientView() {
               onClick={() => {
                 setStageFilter(isActive ? "All stages" : kpi.stageKey)
               }}
-              className={`flex flex-col items-center justify-center py-3 px-2 rounded-md border text-center transition-all cursor-pointer ${
+              className={`flex flex-col items-center justify-center py-2.5 sm:py-3 px-1.5 sm:px-2 rounded-md border text-center transition-all cursor-pointer ${
                 isActive
                   ? "bg-secondary/70 border-primary/50 ring-1 ring-primary/40 shadow-sm"
                   : "bg-card border-border/80 hover:bg-secondary/60 hover:border-primary/40"
               }`}
             >
-              <span className="text-[11px] text-muted-foreground font-normal truncate max-w-full">
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground font-normal truncate max-w-full">
                 {kpi.label}
               </span>
-              <span className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mt-1">
+              <span className="text-lg sm:text-2xl font-bold tracking-tight text-foreground mt-0.5 sm:mt-1">
                 {kpi.count}
               </span>
             </button>
@@ -185,52 +185,55 @@ export function ProductionClientView() {
         })}
       </div>
 
-      {/* Filter Section: Search and Filters in a SINGLE ROW */}
-      <div className="flex flex-col md:flex-row gap-3 items-center w-full">
+      {/* Filter Section: Search and Filters (2 per row on mobile, 1 row on desktop) */}
+      <div className="flex flex-col md:flex-row gap-2.5 sm:gap-3 items-center w-full">
         {/* Search */}
         <div className="relative flex-1 w-full">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/60" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/60" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search order no. or email"
-            className="w-full rounded-md border border-border/80 bg-card pl-9.5 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
+            className="w-full rounded-md border border-border/80 bg-card pl-8.5 sm:pl-9.5 pr-3.5 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
           />
         </div>
 
-        {/* Stage Filter Dropdown */}
-        <div className="relative w-full md:w-64 shrink-0">
-          <select
-            value={stageFilter}
-            onChange={(e) => setStageFilter(e.target.value)}
-            className="w-full appearance-none rounded-md border border-border/80 bg-card px-3.5 py-2.5 text-sm text-foreground focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer pr-10"
-          >
-            <option value="All stages">All stages</option>
-            <option value="All active stages">All active stages</option>
-            <option value="Order Received">Order Received</option>
-            <option value="Order Confirmed">Order Confirmed</option>
-            <option value="Preparing Artwork">Preparing Artwork</option>
-            <option value="Printing">Printing</option>
-            <option value="Quality Check & Packing">Quality Check & Packing</option>
-            <option value="Shipped">Shipped</option>
-            <option value="Out for Delivery">Out for Delivery</option>
-            <option value="Delivered">Delivered</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
-        </div>
+        {/* 2 Filters side-by-side in a 2-column grid on mobile */}
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full md:w-auto shrink-0">
+          {/* Stage Filter Dropdown */}
+          <div className="relative w-full md:w-60">
+            <select
+              value={stageFilter}
+              onChange={(e) => setStageFilter(e.target.value)}
+              className="w-full appearance-none rounded-md border border-border/80 bg-card pl-2.5 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer"
+            >
+              <option value="All stages">All stages</option>
+              <option value="All active stages">All active stages</option>
+              <option value="Order Received">Order Received</option>
+              <option value="Order Confirmed">Order Confirmed</option>
+              <option value="Preparing Artwork">Preparing Artwork</option>
+              <option value="Printing">Printing</option>
+              <option value="Quality Check & Packing">Quality Check & Packing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Out for Delivery">Out for Delivery</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3.5 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
+          </div>
 
-        {/* Sort Order Filter Dropdown */}
-        <div className="relative w-full md:w-44 shrink-0">
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as "oldest" | "newest")}
-            className="w-full appearance-none rounded-md border border-border/80 bg-card px-3.5 py-2.5 text-sm text-foreground focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer pr-10"
-          >
-            <option value="oldest">Oldest first</option>
-            <option value="newest">Newest first</option>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+          {/* Sort Order Filter Dropdown */}
+          <div className="relative w-full md:w-44">
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as "oldest" | "newest")}
+              className="w-full appearance-none rounded-md border border-border/80 bg-card pl-2.5 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer"
+            >
+              <option value="oldest">Oldest first</option>
+              <option value="newest">Newest first</option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3.5 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
+          </div>
         </div>
       </div>
 
@@ -240,12 +243,12 @@ export function ProductionClientView() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                <th className="py-3.5 px-4 font-medium">Order</th>
-                <th className="py-3.5 px-4 font-medium">Customer</th>
-                <th className="py-3.5 px-4 font-medium">Items</th>
-                <th className="py-3.5 px-4 font-medium">Paid on</th>
-                <th className="py-3.5 px-4 font-medium">Stage</th>
-                <th className="py-3.5 px-4 font-medium">Flag</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Order</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Customer</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Items</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Paid on</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Stage</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Flag</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -262,22 +265,22 @@ export function ProductionClientView() {
                     onClick={() => router.push(`/dashboard/production/${order.cleanId}`)}
                     className="hover:bg-secondary/40 transition-colors cursor-pointer group"
                   >
-                    <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors">
+                    <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors whitespace-nowrap">
                       {order.id}
                     </td>
-                    <td className="py-3.5 px-4 text-muted-foreground">
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
                       {order.customer?.email || ""}
                     </td>
-                    <td className="py-3.5 px-4 text-foreground/90 font-mono">
+                    <td className="py-3.5 px-4 text-foreground/90 font-mono whitespace-nowrap">
                       {order.itemsCount}
                     </td>
-                    <td className="py-3.5 px-4 text-muted-foreground">
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
                       {order.paidOn}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
                       {getStageBadge(order.stage)}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
                       {order.flag === "File replaced" && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-950/80 text-amber-500 border border-amber-800/80">
                           File replaced

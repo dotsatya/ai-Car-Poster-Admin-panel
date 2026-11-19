@@ -3,7 +3,16 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Check, Package, WandSparkles, ArrowRight, ArrowUpRight } from "lucide-react"
+import {
+  ArrowLeft,
+  Check,
+  Package,
+  WandSparkles,
+  ArrowRight,
+  ArrowUpRight,
+  User,
+  MapPin,
+} from "lucide-react"
 import { DemoCustomer } from "@/lib/demoCustomer"
 
 interface CustomerDetailCardProps {
@@ -111,14 +120,14 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
       </div>
 
       {/* Main Customer Detail Card */}
-      <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-6">
+      <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-6">
         {/* Top Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 gap-3 border-b border-border/60">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+          <div className="flex flex-wrap items-center gap-3 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">
               {customer.email}
             </h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               {customer.verified ? (
                 <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
                   Verified
@@ -204,31 +213,109 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
           </div>
         </div>
 
-        {/* Metadata Row: Joined, Last sign in, Generation allowance */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-1">
+        {/* Customer Profile & Address Information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-md border border-border/80 bg-secondary/20 shadow-xs">
+          {/* Customer Profile */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-1.5 border-b border-border/60">
+              <User className="size-3.5 text-primary" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Customer Information
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-normal text-muted-foreground block truncate">
+                  Full Name
+                </span>
+                <p className="font-semibold text-foreground leading-tight truncate">
+                  {customer.name}
+                </p>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-normal text-muted-foreground block truncate">
+                  Customer ID
+                </span>
+                <p className="font-mono text-xs text-muted-foreground leading-tight">
+                  #{customer.cleanId}
+                </p>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-normal text-muted-foreground block truncate">
+                  Email
+                </span>
+                <p className="font-medium text-foreground leading-tight truncate" title={customer.email}>
+                  {customer.email}
+                </p>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-normal text-muted-foreground block truncate">
+                  Phone
+                </span>
+                <p className="font-medium text-foreground leading-tight truncate">
+                  {customer.phone || "—"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Shipping & Delivery Address */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-1.5 border-b border-border/60">
+              <MapPin className="size-3.5 text-primary" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Shipping & Delivery Address
+              </h3>
+            </div>
+            {customer.address ? (
+              <div className="space-y-1 text-xs sm:text-sm">
+                <p className="font-semibold text-foreground leading-tight">
+                  {customer.address.line1}
+                  {customer.address.line2 ? `, ${customer.address.line2}` : ""}
+                </p>
+                <p className="text-muted-foreground font-normal leading-tight">
+                  {customer.address.city}, {customer.address.state} {customer.address.zip}
+                </p>
+                <p className="text-muted-foreground font-normal leading-tight">
+                  {customer.address.country}
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">
+                No shipping address on file.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Metadata Row: Joined, Last sign in, Generation allowance (2 in a row on mobile) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 pt-1">
           <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground block">
+            <span className="text-xs font-normal text-muted-foreground block truncate">
               Joined
             </span>
-            <p className="text-sm font-semibold text-foreground leading-tight">
+            <p className="text-xs sm:text-sm font-semibold text-foreground leading-tight truncate">
               {customer.joinedFull}
             </p>
           </div>
 
           <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground block">
+            <span className="text-xs font-normal text-muted-foreground block truncate">
               Last sign in
             </span>
-            <p className="text-sm font-semibold text-foreground leading-tight">
+            <p className="text-xs sm:text-sm font-semibold text-foreground leading-tight truncate">
               {customer.lastSignIn}
             </p>
           </div>
 
-          <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground block">
+          <div className="space-y-1 col-span-2 sm:col-span-1">
+            <span className="text-xs font-normal text-muted-foreground block truncate">
               Generation allowance
             </span>
-            <p className="text-sm font-semibold text-foreground leading-tight">
+            <p className="text-xs sm:text-sm font-semibold text-foreground leading-tight">
               {customer.generationAllowance.used} of {customer.generationAllowance.total} used
             </p>
           </div>
@@ -258,10 +345,10 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                  <th className="py-3.5 px-4 font-medium">Date</th>
-                  <th className="py-3.5 px-4 font-medium">Templates</th>
-                  <th className="py-3.5 px-4 font-medium">Type</th>
-                  <th className="py-3.5 px-4 font-medium">Status</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Date</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Templates</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Type</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -286,16 +373,16 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                           : "hover:bg-secondary/20"
                       }`}
                     >
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {gen.date}
                       </td>
-                      <td className="py-3.5 px-4 font-medium text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-medium text-foreground text-sm whitespace-nowrap">
                         {gen.template}
                       </td>
-                      <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                      <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm whitespace-nowrap">
                         {gen.type}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         {gen.status === "Completed" ? (
                           <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
                             Completed
@@ -346,12 +433,12 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                  <th className="py-3.5 px-4 font-medium">Order</th>
-                  <th className="py-3.5 px-4 font-medium">Items</th>
-                  <th className="py-3.5 px-4 font-medium">Total</th>
-                  <th className="py-3.5 px-4 font-medium">Payment</th>
-                  <th className="py-3.5 px-4 font-medium">Stage</th>
-                  <th className="py-3.5 px-4 font-medium">Date</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Order</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Items</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Total</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Payment</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Stage</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -370,16 +457,16 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                         onClick={() => router.push(`/dashboard/orders/${ord.cleanId}`)}
                         className="hover:bg-secondary/20 transition-colors cursor-pointer group"
                       >
-                        <td className="py-3.5 px-4 font-semibold text-foreground group-hover:text-primary transition-colors text-sm">
+                        <td className="py-3.5 px-4 font-semibold text-foreground group-hover:text-primary transition-colors text-sm whitespace-nowrap">
                           {ord.id}
                         </td>
-                        <td className="py-3.5 px-4 font-normal text-foreground text-sm">
+                        <td className="py-3.5 px-4 font-normal text-foreground text-sm whitespace-nowrap">
                           {ord.itemsCount} {ord.itemsCount === 1 ? "item" : "items"}
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                        <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                           {ord.total}
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-3.5 px-4 whitespace-nowrap">
                           <span
                             className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getPaymentBadge(
                               ord.payment
@@ -388,7 +475,7 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                             {ord.payment}
                           </span>
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-3.5 px-4 whitespace-nowrap">
                           {stageBadge ? (
                             <span
                               className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${stageBadge}`}
@@ -401,7 +488,7 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                             </span>
                           )}
                         </td>
-                        <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                        <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm whitespace-nowrap">
                           {ord.date}
                         </td>
                       </tr>
@@ -435,7 +522,7 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
                   placeholder="Reason (required)"
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full rounded-md border border-border/80 bg-background/60 p-3 pr-24 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-y"
+                  className="w-full rounded-md border border-border/80 bg-background/60 p-3 pr-24 focus:pr-3 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150 resize-y"
                 />
                 <span className="pointer-events-none absolute right-3 top-3 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                   Click to edit

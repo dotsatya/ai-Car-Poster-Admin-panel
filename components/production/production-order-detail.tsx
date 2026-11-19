@@ -394,7 +394,7 @@ export function ProductionOrderDetail({
       )}
 
       {/* Main Order Card */}
-      <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm flex flex-col gap-6">
+      <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm flex flex-col gap-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
@@ -633,7 +633,7 @@ export function ProductionOrderDetail({
                         value={emergencyReason}
                         onChange={(e) => setEmergencyReason(e.target.value)}
                         placeholder="e.g. Print defect, rework required"
-                        className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-22 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-amber-500/60 focus:outline-none focus:ring-1 focus:ring-amber-500/30 transition-colors"
+                        className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-22 focus:pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-amber-500/60 focus:outline-none focus:ring-1 focus:ring-amber-500/30 transition-all duration-150"
                       />
                       <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                         Click to edit
@@ -813,56 +813,59 @@ export function ProductionOrderDetail({
               </span>
             </div>
 
-            {/* Carrier */}
-            <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground font-normal">
-                Carrier
-              </label>
-              <div className="relative group">
-                <input
-                  type="text"
-                  value={carrier}
-                  onChange={(e) => {
-                    setCarrier(e.target.value);
-                    setIsSaved(false);
-                  }}
-                  onBlur={handleSaveShipping}
-                  placeholder="Carrier name"
-                  className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
-                />
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
-                  Click to edit
-                </span>
-              </div>
-            </div>
-
-            {/* Tracking number */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <label className="text-xs text-muted-foreground font-normal">
-                  Tracking number
+            {/* Carrier & Tracking in 2 columns on mobile */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:col-span-2">
+              {/* Carrier */}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-muted-foreground font-normal truncate">
+                  Carrier
                 </label>
-                {shippingSaved && (
-                  <span className="text-[10px] text-emerald-400 font-medium">
-                    Saved
+                <div className="relative group">
+                  <input
+                    type="text"
+                    value={carrier}
+                    onChange={(e) => {
+                      setCarrier(e.target.value);
+                      setIsSaved(false);
+                    }}
+                    onBlur={handleSaveShipping}
+                    placeholder="Carrier name"
+                    className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-all duration-150"
+                  />
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    Click to edit
                   </span>
-                )}
+                </div>
               </div>
-              <div className="relative group">
-                <input
-                  type="text"
-                  value={trackingNumber}
-                  onChange={(e) => {
-                    setTrackingNumber(e.target.value);
-                    setIsSaved(false);
-                  }}
-                  onBlur={handleSaveShipping}
-                  placeholder="Enter when available"
-                  className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
-                />
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
-                  Click to edit
-                </span>
+
+              {/* Tracking number */}
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs text-muted-foreground font-normal truncate">
+                    Tracking number
+                  </label>
+                  {shippingSaved && (
+                    <span className="text-[10px] text-emerald-400 font-medium">
+                      Saved
+                    </span>
+                  )}
+                </div>
+                <div className="relative group">
+                  <input
+                    type="text"
+                    value={trackingNumber}
+                    onChange={(e) => {
+                      setTrackingNumber(e.target.value);
+                      setIsSaved(false);
+                    }}
+                    onBlur={handleSaveShipping}
+                    placeholder="Enter when available"
+                    className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-all duration-150"
+                  />
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    Click to edit
+                  </span>
+                </div>
               </div>
             </div>
           </div>

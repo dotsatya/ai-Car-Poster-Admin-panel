@@ -541,9 +541,9 @@ function ReportsContent() {
       <div className="grid gap-6">
         {/* 1. Order summary Section */}
         {activeTab === "summary" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-4">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-4">
             {/* Header Row with Export CSV */}
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div>
                 <h3 className="font-semibold text-base text-foreground">
                   Order summary
@@ -568,33 +568,33 @@ function ReportsContent() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                    <th className="py-3.5 px-4 font-medium">Week</th>
-                    <th className="py-3.5 px-4 font-medium">Orders</th>
-                    <th className="py-3.5 px-4 font-medium">Posters sold</th>
-                    <th className="py-3.5 px-4 font-medium">Revenue</th>
-                    <th className="py-3.5 px-4 font-medium">Average order</th>
-                    <th className="py-3.5 px-4 font-medium">Refunds</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Week</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Orders</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Posters sold</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Revenue</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Average order</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Refunds</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {WEEKLY_DATA.map((row) => (
                     <tr key={row.week} className="hover:bg-secondary/20 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.week}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.orders}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.postersSold}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.revenue}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.averageOrder}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.refunds}
                       </td>
                     </tr>
@@ -607,9 +607,9 @@ function ReportsContent() {
 
         {/* 2. Sales by template Section */}
         {activeTab === "template" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-4">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-4">
             {/* Header Row with Export CSV & Rule Badge */}
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div>
                 <h3 className="font-semibold text-base text-foreground">
                   Sales by template
@@ -637,18 +637,18 @@ function ReportsContent() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                    <th className="py-3.5 px-4 font-medium">Template</th>
-                    <th className="py-3.5 px-4 font-medium">Individual sold</th>
-                    <th className="py-3.5 px-4 font-medium">Revenue</th>
-                    <th className="py-3.5 px-4 font-medium">Share of total (%)</th>
-                    <th className="py-3.5 px-4 font-medium">Used in combined</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Template</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Individual sold</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Revenue</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Share of total (%)</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Used in combined</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {TEMPLATE_SALES_DATA.map((row) => (
                     <tr key={row.name} className="hover:bg-secondary/20 transition-colors">
                       {/* Template name + badge if combined */}
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         <span>{row.name}</span>
                         {row.isCombined && (
                           <span className="ml-2 inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-md border bg-blue-950/80 text-blue-400 border-blue-800/40">
@@ -658,17 +658,17 @@ function ReportsContent() {
                       </td>
 
                       {/* Individual sold */}
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.individualSold}
                       </td>
 
                       {/* Revenue */}
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.revenue}
                       </td>
 
                       {/* Share of total - Easy-to-read percent badge + bar */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-semibold text-foreground w-10 shrink-0">
                             {row.sharePercent}%
@@ -683,7 +683,7 @@ function ReportsContent() {
                       </td>
 
                       {/* Used in combined */}
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.usedInCombined}
                       </td>
                     </tr>
@@ -701,9 +701,9 @@ function ReportsContent() {
 
         {/* 3. Generation activity Section */}
         {activeTab === "activity" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-4">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-4">
             {/* Header Row with Export CSV */}
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div>
                 <h3 className="font-semibold text-base text-foreground">
                   Generation activity
@@ -728,37 +728,37 @@ function ReportsContent() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                    <th className="py-3.5 px-4 font-medium">Period</th>
-                    <th className="py-3.5 px-4 font-medium">Total Previews</th>
-                    <th className="py-3.5 px-4 font-medium">Individual</th>
-                    <th className="py-3.5 px-4 font-medium">Combined</th>
-                    <th className="py-3.5 px-4 font-medium">Unique Users</th>
-                    <th className="py-3.5 px-4 font-medium">Avg Duration</th>
-                    <th className="py-3.5 px-4 font-medium">Success Rate</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Period</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Total Previews</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Individual</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Combined</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Unique Users</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Avg Duration</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Success Rate</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {GENERATION_ACTIVITY_DATA.map((row) => (
                     <tr key={row.period} className="hover:bg-secondary/20 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.period}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.totalGenerations}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.individualCount}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.combinedCount}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.uniqueUsers}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.avgDuration}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-900/60">
                           {row.successRate}
                         </span>
@@ -777,9 +777,9 @@ function ReportsContent() {
 
         {/* 4. Sales by print size Section */}
         {activeTab === "size" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-4">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-4">
             {/* Header Row with Export CSV */}
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div>
                 <h3 className="font-semibold text-base text-foreground">
                   Sales by print size
@@ -804,31 +804,31 @@ function ReportsContent() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                    <th className="py-3.5 px-4 font-medium">Print Size</th>
-                    <th className="py-3.5 px-4 font-medium">Dimensions (300 DPI)</th>
-                    <th className="py-3.5 px-4 font-medium">Units Sold</th>
-                    <th className="py-3.5 px-4 font-medium">Revenue</th>
-                    <th className="py-3.5 px-4 font-medium">Share of total (%)</th>
-                    <th className="py-3.5 px-4 font-medium">Avg Price</th>
-                    <th className="py-3.5 px-4 font-medium">Top Template</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Print Size</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Dimensions (300 DPI)</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Units Sold</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Revenue</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Share of total (%)</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Avg Price</th>
+                    <th className="py-3.5 px-4 font-medium whitespace-nowrap">Top Template</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {PRINT_SIZE_DATA.map((row) => (
                     <tr key={row.size} className="hover:bg-secondary/20 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.size}
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-muted-foreground font-normal">
+                      <td className="py-3.5 px-4 text-xs text-muted-foreground font-normal whitespace-nowrap">
                         {row.dimensions}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.unitsSold}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.revenue}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-semibold text-foreground w-11 shrink-0">
                             {row.sharePercent}%
@@ -841,10 +841,10 @@ function ReportsContent() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                         {row.avgPrice}
                       </td>
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                      <td className="py-3.5 px-4 text-xs text-muted-foreground font-normal whitespace-nowrap">
                         {row.topTemplate}
                       </td>
                     </tr>

@@ -47,12 +47,12 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-              <th className="py-3.5 px-4 font-medium">Job</th>
-              <th className="py-3.5 px-4 font-medium">Customer</th>
-              <th className="py-3.5 px-4 font-medium">Template(s)</th>
-              <th className="py-3.5 px-4 font-medium">Type</th>
-              <th className="py-3.5 px-4 font-medium">State</th>
-              <th className="py-3.5 px-4 font-medium">Time</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Job</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Customer</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Template(s)</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Type</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">State</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Time</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
@@ -70,22 +70,22 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
                   className="hover:bg-secondary/40 transition-colors cursor-pointer"
                 >
                   {/* Job ID */}
-                  <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                  <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                     {job.id}
                   </td>
 
                   {/* Customer */}
-                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm whitespace-nowrap">
                     {job.customer}
                   </td>
 
                   {/* Template(s) */}
-                  <td className="py-3.5 px-4 font-medium text-foreground text-sm">
+                  <td className="py-3.5 px-4 font-medium text-foreground text-sm whitespace-nowrap">
                     {job.templates}
                   </td>
 
                   {/* Type */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     {job.type === "Combined" ? (
                       <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-blue-950/80 text-blue-400 border-blue-800/40">
                         Combined
@@ -98,7 +98,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
                   </td>
 
                   {/* State */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <span
                       className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getStateBadge(
                         job.state
@@ -109,7 +109,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
                   </td>
 
                   {/* Time */}
-                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm whitespace-nowrap">
                     {job.time}
                   </td>
                 </tr>
@@ -126,7 +126,7 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
           {totalJobsCount.toLocaleString("en-US")}
         </span>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
           <button
             type="button"
             disabled={validPage <= 1}
@@ -136,10 +136,10 @@ export function AiJobsTable({ jobs, totalJobsCount = 2796 }: AiJobsTableProps) {
             Previous
           </button>
 
-          <div className="flex items-center gap-1 px-1">
+          <div className="flex flex-wrap items-center justify-center gap-1 px-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum, idx) => (
               <React.Fragment key={pageNum}>
-                {idx > 0 && <span className="text-muted-foreground/60 select-none">·</span>}
+                {idx > 0 && <span className="text-muted-foreground/60 select-none hidden sm:inline">·</span>}
                 <button
                   type="button"
                   onClick={() => setCurrentPage(pageNum)}

@@ -251,7 +251,7 @@ function AccountSettingsContent() {
       <div className="grid gap-6">
         {/* --- TAB 1: PROFILE INFORMATION --- */}
         {activeTab === "profile" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-6">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-6">
             <div className="flex items-center justify-between pb-3 border-b border-border/60">
               <div>
                 <h3 className="font-semibold text-base text-foreground">
@@ -267,9 +267,9 @@ function AccountSettingsContent() {
             </div>
 
             <form onSubmit={handleSaveProfile} className="space-y-6">
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-3 sm:gap-5">
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
+                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
                     Full Name <span className="text-primary">*</span>
                   </label>
                   <div className="relative group">
@@ -278,16 +278,16 @@ function AccountSettingsContent() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Alexander Drake"
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
+                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
                     Email Address <span className="text-primary">*</span>
                   </label>
                   <div className="relative group">
@@ -296,15 +296,15 @@ function AccountSettingsContent() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. admin1@gmail.com"
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
+                <div className="col-span-2">
                   <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
                     Phone Number
                   </label>
@@ -314,9 +314,9 @@ function AccountSettingsContent() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. +1 (503) 555-0147"
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
@@ -339,7 +339,7 @@ function AccountSettingsContent() {
 
         {/* --- TAB 2: SECURITY & CREDENTIALS --- */}
         {activeTab === "security" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-5">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-5">
             <div className="pb-2 border-b border-border/60">
               <h3 className="font-semibold text-base text-foreground">
                 Password & Authentication
@@ -350,9 +350,9 @@ function AccountSettingsContent() {
             </div>
 
             <form onSubmit={handleSavePassword} className="space-y-5">
-              <div className="grid gap-5 sm:grid-cols-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5">
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
+                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
                     Current Password
                   </label>
                   <div className="relative group">
@@ -361,16 +361,16 @@ function AccountSettingsContent() {
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
+                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
                     New Password
                   </label>
                   <div className="relative group">
@@ -379,16 +379,16 @@ function AccountSettingsContent() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
+                <div className="col-span-2 md:col-span-1">
+                  <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
                     Confirm New Password
                   </label>
                   <div className="relative group">
@@ -397,9 +397,9 @@ function AccountSettingsContent() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
@@ -422,7 +422,7 @@ function AccountSettingsContent() {
 
         {/* --- TAB 3: NOTIFICATIONS & ALERTS --- */}
         {activeTab === "notifications" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-6">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-6">
             <div className="pb-2 border-b border-border/60">
               <h3 className="font-semibold text-base text-foreground">
                 Notification Preferences

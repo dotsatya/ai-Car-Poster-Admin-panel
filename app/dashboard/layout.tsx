@@ -19,7 +19,7 @@ export default function DashboardLayout({
           <React.Suspense fallback={<header className="h-16 border-b border-border/80 bg-background/95 px-6" />}>
             <DashboardHeader />
           </React.Suspense>
-          <main className="flex flex-1 flex-col gap-6 p-6">
+          <main className="flex flex-1 flex-col gap-4 sm:gap-6 p-3.5 sm:p-5 lg:p-6 w-full max-w-full overflow-x-hidden">
             {children}
           </main>
         </SidebarInset>

@@ -21,7 +21,7 @@ export function TemplateHeader({ onNewTemplate }: TemplateHeaderProps) {
       <button
         type="button"
         onClick={onNewTemplate}
-        className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors cursor-pointer"
+        className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-red-950/30 hover:bg-primary/90 transition-colors cursor-pointer self-start sm:self-auto"
       >
         <Plus className="size-4" />
         <span>Create Template</span>

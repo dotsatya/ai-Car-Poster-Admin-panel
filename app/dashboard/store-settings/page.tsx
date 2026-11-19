@@ -274,12 +274,12 @@ function StoreSettingsContent() {
       <div className="grid gap-6">
         {/* 1. Store Identity Subsection */}
         {activeTab === "identity" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-5">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-5">
             <div>
               <h3 className="font-semibold text-base text-foreground">Store Identity</h3>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-3 pt-1">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5 pt-1">
               <div>
                 <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
                   Brand Name
@@ -289,9 +289,9 @@ function StoreSettingsContent() {
                     type="text"
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
@@ -306,15 +306,15 @@ function StoreSettingsContent() {
                     type="email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
               </div>
 
-              <div>
+              <div className="col-span-2 md:col-span-1">
                 <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
                   Support Phone
                 </label>
@@ -323,9 +323,9 @@ function StoreSettingsContent() {
                     type="text"
                     value={supportPhone}
                     onChange={(e) => setSupportPhone(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
@@ -348,7 +348,7 @@ function StoreSettingsContent() {
 
         {/* 2. Store Status Subsection */}
         {activeTab === "status" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-5">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-5">
             {/* Header & Toggle */}
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -394,7 +394,7 @@ function StoreSettingsContent() {
                     value={closingReason}
                     onChange={(e) => setClosingReason(e.target.value)}
                     placeholder="Example: Printer maintenance until Monday"
-                    className="w-full rounded-md border border-border/80 bg-[#131418] p-3 pr-24 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-none"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] p-3 pr-24 focus:pr-3 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150 resize-none"
                   />
                   <span className="pointer-events-none absolute right-3 top-3 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
@@ -411,7 +411,7 @@ function StoreSettingsContent() {
                     rows={3}
                     value={visitorNotice}
                     onChange={(e) => setVisitorNotice(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] p-3 pr-24 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-none"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] p-3 pr-24 focus:pr-3 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150 resize-none"
                   />
                   <span className="pointer-events-none absolute right-3 top-3 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
@@ -471,7 +471,7 @@ function StoreSettingsContent() {
 
         {/* 3. Generation Limits Subsection */}
         {activeTab === "limits" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-5">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-5">
             <div>
               <h3 className="font-semibold text-base text-foreground">Generation Limits</h3>
             </div>
@@ -488,7 +488,7 @@ function StoreSettingsContent() {
                       type="number"
                       value={individualPreviews}
                       onChange={(e) => setIndividualPreviews(Number(e.target.value))}
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
                     <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
@@ -525,7 +525,7 @@ function StoreSettingsContent() {
                       type="number"
                       value={combinedPreviews}
                       onChange={(e) => setCombinedPreviews(Number(e.target.value))}
-                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
                     <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
@@ -561,7 +561,7 @@ function StoreSettingsContent() {
                     type="number"
                     value={regenerationsPerSession}
                     onChange={(e) => setRegenerationsPerSession(Number(e.target.value))}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-20 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-20 focus:pr-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
                   <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
@@ -581,7 +581,7 @@ function StoreSettingsContent() {
                     type="number"
                     value={rateLimitMin}
                     onChange={(e) => setRateLimitMin(Number(e.target.value))}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-20 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-20 focus:pr-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
                   <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
@@ -601,7 +601,7 @@ function StoreSettingsContent() {
                     type="number"
                     value={rateLimitHour}
                     onChange={(e) => setRateLimitHour(Number(e.target.value))}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-20 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-20 focus:pr-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
                   <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
@@ -647,7 +647,7 @@ function StoreSettingsContent() {
 
         {/* 4. Printing Size and Shipping Subsection */}
         {activeTab === "shipping" && (
-          <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-5">
+          <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="font-semibold text-base text-foreground">
@@ -716,71 +716,71 @@ function StoreSettingsContent() {
               </div>
             </div>
 
-            {/* Shipping Configuration Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+            {/* Shipping Configuration Fields (2 in a row on mobile, 4 on desktop) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 pt-2">
               <div>
-                <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
-                  Standard Shipping Rate ($)
+                <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
+                  Standard Rate ($)
                 </label>
                 <div className="relative group">
                   <input
                     type="text"
                     value={standardShippingRate}
                     onChange={(e) => setStandardShippingRate(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
-                  Express Shipping Rate ($)
+                <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
+                  Express Rate ($)
                 </label>
                 <div className="relative group">
                   <input
                     type="text"
                     value={expressShippingRate}
                     onChange={(e) => setExpressShippingRate(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
-                  Free Shipping Minimum ($)
+                <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
+                  Free Ship Min ($)
                 </label>
                 <div className="relative group">
                   <input
                     type="text"
                     value={freeShippingThreshold}
                     onChange={(e) => setFreeShippingThreshold(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-muted-foreground block mb-1.5 font-normal">
-                  Estimated Delivery Window
+                <label className="text-xs text-muted-foreground block mb-1.5 font-normal truncate">
+                  Delivery Window
                 </label>
                 <div className="relative group">
                   <input
                     type="text"
                     value={estimatedDeliveryDays}
                     onChange={(e) => setEstimatedDeliveryDays(e.target.value)}
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>

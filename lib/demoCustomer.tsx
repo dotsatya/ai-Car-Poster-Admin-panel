@@ -9,6 +9,7 @@ import {
   getGenerationsByEmail,
   getOrdersByEmail,
   getOrderStage,
+  type Address,
   type JobState,
   type JobType,
   type PaymentStatus,
@@ -52,6 +53,9 @@ export interface DemoCustomer {
   cleanId: string
   name: string
   email: string
+  phone?: string
+  address?: Address
+  formattedAddress?: string
   account: "Active" | "Disabled"
   verified: boolean
   posters: number
@@ -86,6 +90,16 @@ export const DEMO_CUSTOMERS: DemoCustomer[] = CUSTOMERS.map((c) => {
     cleanId: c.cleanId,
     name: c.name,
     email: c.email,
+    phone: c.phone,
+    address: c.address,
+    formattedAddress: [
+      c.address?.line1,
+      c.address?.line2,
+      c.address ? `${c.address.city}, ${c.address.state} ${c.address.zip}` : null,
+      c.address?.country,
+    ]
+      .filter(Boolean)
+      .join(", "),
     account: c.account,
     verified: c.verified,
     posters: s.posters,

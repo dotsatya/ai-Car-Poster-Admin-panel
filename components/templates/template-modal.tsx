@@ -346,7 +346,7 @@ export function TemplateModal({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Porsche 911 GT3 RS British Racing Green & Gold"
-                    className="w-full rounded-md border border-border/80 bg-card/60 pl-3.5 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    className="w-full rounded-md border border-border/80 bg-card/60 pl-3.5 pr-24 focus:pr-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
                   <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
@@ -354,10 +354,10 @@ export function TemplateModal({
                 </div>
               </div>
 
-              {/* Vehicle Name & Tag */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Vehicle Name & Tag (2 in a row) */}
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground block">
+                  <label className="text-xs font-medium text-muted-foreground block truncate">
                     Vehicle Name <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative group">
@@ -366,24 +366,24 @@ export function TemplateModal({
                       required
                       value={vehicle}
                       onChange={(e) => setVehicle(e.target.value)}
-                      placeholder="e.g. Porsche 911 GT3 RS"
-                      className="w-full rounded-md border border-border/80 bg-card/60 pl-3.5 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      placeholder="e.g. Porsche 911"
+                      className="w-full rounded-md border border-border/80 bg-card/60 pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground block">
+                  <label className="text-xs font-medium text-muted-foreground block truncate">
                     Tag
                   </label>
                   <div className="relative">
                     <select
                       value={tag}
                       onChange={(e) => setTag(e.target.value)}
-                      className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+                      className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-3 pr-8 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
                     >
                       {ALL_TAGS.map((t) => (
                         <option key={t} value={t} className="bg-[#121315] text-foreground">
@@ -391,22 +391,22 @@ export function TemplateModal({
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+                    <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
                   </div>
                 </div>
               </div>
 
-              {/* Category & Price */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Category & Price (2 in a row) */}
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground block">
+                  <label className="text-xs font-medium text-muted-foreground block truncate">
                     Category <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+                      className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-3 pr-8 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
                     >
                       {ALL_CATEGORIES.map((c) => (
                         <option key={c} value={c} className="bg-[#121315] text-foreground">
@@ -414,12 +414,12 @@ export function TemplateModal({
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+                    <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground block">
+                  <label className="text-xs font-medium text-muted-foreground block truncate">
                     Price (per poster) <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative group">
@@ -429,9 +429,9 @@ export function TemplateModal({
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       placeholder="32.00"
-                      className="w-full rounded-md border border-border/80 bg-card/60 pl-3.5 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                      className="w-full rounded-md border border-border/80 bg-card/60 pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                     />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                       Click to edit
                     </span>
                   </div>
@@ -450,7 +450,7 @@ export function TemplateModal({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Deep British racing green backdrop with distressed gold lettering..."
-                    className="w-full rounded-md border border-border/80 bg-card/60 p-3 pr-24 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-y leading-relaxed"
+                    className="w-full rounded-md border border-border/80 bg-card/60 p-3 pr-24 focus:pr-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150 resize-y leading-relaxed"
                   />
                   <span className="pointer-events-none absolute right-3 top-3 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
@@ -678,7 +678,7 @@ export function TemplateModal({
             </div>
 
             {/* Right Action Buttons */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-2.5 w-full sm:w-auto">
               {isEditMode ? (
                 <>
                   <button

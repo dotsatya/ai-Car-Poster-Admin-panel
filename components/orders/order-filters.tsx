@@ -34,17 +34,17 @@ export function OrderFilters({
 }: OrderFiltersProps) {
   return (
     <div className="flex flex-col gap-3">
-      {/* All 4 filters arranged in one single row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+      {/* 4 filters arranged: 2 items per row on mobile, 4 in one row on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
         {/* 1. Search Input */}
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/60" />
+          <Search className="pointer-events-none absolute left-2.5 sm:left-3.5 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/60" />
           <input
             type="text"
-            placeholder="Search order no. or email"
+            placeholder="Search order or email"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full rounded-md border border-border/80 bg-card/60 pl-9 pr-3.5 py-2 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+            className="w-full rounded-md border border-border/80 bg-card/60 pl-8 sm:pl-9 pr-2.5 sm:pr-3.5 py-2 text-xs sm:text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
           />
         </div>
 
@@ -53,7 +53,7 @@ export function OrderFilters({
           <select
             value={paymentFilter}
             onChange={(e) => onPaymentFilterChange(e.target.value)}
-            className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+            className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-2.5 sm:pl-3.5 pr-7 sm:pr-9 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
           >
             <option value="all" className="bg-[#121315] text-foreground">
               All payment states
@@ -71,7 +71,7 @@ export function OrderFilters({
               Cancelled
             </option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
         </div>
 
         {/* 3. Stages filter */}
@@ -79,7 +79,7 @@ export function OrderFilters({
           <select
             value={stageFilter}
             onChange={(e) => onStageFilterChange(e.target.value)}
-            className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+            className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-2.5 sm:pl-3.5 pr-7 sm:pr-9 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
           >
             <option value="all" className="bg-[#121315] text-foreground">
               All stages
@@ -109,7 +109,7 @@ export function OrderFilters({
               Delivered
             </option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
         </div>
 
         {/* 4. Date range filter */}
@@ -117,7 +117,7 @@ export function OrderFilters({
           <select
             value={dateFilter}
             onChange={(e) => onDateFilterChange(e.target.value)}
-            className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+            className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-2.5 sm:pl-3.5 pr-7 sm:pr-9 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
           >
             <option value="1w" className="bg-[#121315] text-foreground">
               Last week
@@ -135,14 +135,14 @@ export function OrderFilters({
               Custom range
             </option>
           </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+          <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
         </div>
       </div>
 
       {/* Custom Range Date Pickers (if chosen) */}
       {dateFilter === "custom" ? (
-        <div className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-md border border-border/80 bg-card/40">
-          <div className="w-full sm:w-1/2 space-y-1">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 p-3 rounded-md border border-border/80 bg-card/40">
+          <div className="space-y-1">
             <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-[0.03em]">
               Start Date
             </label>
@@ -150,10 +150,10 @@ export function OrderFilters({
               type="date"
               value={customStart}
               onChange={(e) => onCustomStartChange(e.target.value)}
-              className="w-full rounded-md border border-border/80 bg-card/80 px-3 py-1.5 text-xs text-foreground outline-none focus:border-primary/50"
+              className="w-full rounded-md border border-border/80 bg-card/80 px-2.5 sm:px-3 py-1.5 text-xs text-foreground outline-none focus:border-primary/50"
             />
           </div>
-          <div className="w-full sm:w-1/2 space-y-1">
+          <div className="space-y-1">
             <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-[0.03em]">
               End Date
             </label>
@@ -161,7 +161,7 @@ export function OrderFilters({
               type="date"
               value={customEnd}
               onChange={(e) => onCustomEndChange(e.target.value)}
-              className="w-full rounded-md border border-border/80 bg-card/80 px-3 py-1.5 text-xs text-foreground outline-none focus:border-primary/50"
+              className="w-full rounded-md border border-border/80 bg-card/80 px-2.5 sm:px-3 py-1.5 text-xs text-foreground outline-none focus:border-primary/50"
             />
           </div>
         </div>

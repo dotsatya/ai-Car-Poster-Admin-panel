@@ -45,11 +45,11 @@ export default function StaffPage() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                <th className="py-3.5 px-4 font-medium">Team Member</th>
-                <th className="py-3.5 px-4 font-medium">Role</th>
-                <th className="py-3.5 px-4 font-medium">Status</th>
-                <th className="py-3.5 px-4 font-medium">Last sign in</th>
-                <th className="py-3.5 px-4 font-medium text-right">Actions</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Team Member</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Role</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Status</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Last sign in</th>
+                <th className="py-3.5 px-4 font-medium text-right whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -59,7 +59,7 @@ export default function StaffPage() {
                   onClick={() => router.push(`/dashboard/staff/${member.cleanId}`)}
                   className="hover:bg-secondary/40 transition-colors cursor-pointer group"
                 >
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                       {member.name}
                     </p>
@@ -67,12 +67,12 @@ export default function StaffPage() {
                       <Mail className="size-3 text-muted-foreground/70" /> {member.email}
                     </p>
                   </td>
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className="rounded-md bg-secondary border border-border/60 px-2 py-0.5 text-xs font-medium text-foreground/90">
                       {member.role}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     {member.status === "Active" ? (
                       <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400">
                         <span className="size-1.5 rounded-full bg-emerald-400" />
@@ -85,12 +85,12 @@ export default function StaffPage() {
                       </span>
                     )}
                   </td>
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className="font-semibold text-foreground text-sm">
                       {member.lastSignIn}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-right">
+                  <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <button
                       type="button"
                       onClick={(e) => {

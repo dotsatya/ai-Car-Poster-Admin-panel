@@ -41,8 +41,8 @@ export function OrderHeader({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-        {/* Time range selector placed right before Export CSV */}
-        <div className="inline-flex items-center rounded-md border border-border/80 bg-card/80 p-1 shadow-sm">
+        {/* Time range selector hidden on mobile and tablet, visible on desktop (lg) */}
+        <div className="hidden lg:inline-flex items-center rounded-md border border-border/80 bg-card/80 p-1 shadow-sm overflow-x-auto no-scrollbar max-w-full">
           {TIME_RANGES.map((range) => {
             const isActive = selectedRange === range.id;
             return (
@@ -50,7 +50,7 @@ export function OrderHeader({
                 key={range.id}
                 type="button"
                 onClick={() => onRangeChange?.(range.id)}
-                className={`px-2.5 sm:px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
@@ -66,7 +66,7 @@ export function OrderHeader({
         <button
           type="button"
           onClick={onExportCSV}
-          className="inline-flex items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3.5 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm"
+          className="inline-flex items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3.5 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm shrink-0"
         >
           <Download className="size-4 text-primary" />
           <span>Export CSV</span>

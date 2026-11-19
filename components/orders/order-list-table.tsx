@@ -102,13 +102,13 @@ export function OrderListTable({ orders }: OrderListTableProps) {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-              <th className="py-3.5 px-4 font-medium">Order</th>
-              <th className="py-3.5 px-4 font-medium">Customer</th>
-              <th className="py-3.5 px-4 font-medium">Items</th>
-              <th className="py-3.5 px-4 font-medium">Total</th>
-              <th className="py-3.5 px-4 font-medium">Payment</th>
-              <th className="py-3.5 px-4 font-medium">Stage</th>
-              <th className="py-3.5 px-4 font-medium">Date</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Order</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Customer</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Items</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Total</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Payment</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Stage</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Date</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
@@ -128,19 +128,19 @@ export function OrderListTable({ orders }: OrderListTableProps) {
                     onClick={() => router.push(`/dashboard/orders/${ord.cleanId}`)}
                     className="hover:bg-secondary/40 transition-colors cursor-pointer group"
                   >
-                    <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors">
+                    <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors whitespace-nowrap">
                       {ord.id}
                     </td>
-                    <td className="py-3.5 px-4 font-normal text-muted-foreground group-hover:text-foreground/90 transition-colors">
+                    <td className="py-3.5 px-4 font-normal text-muted-foreground group-hover:text-foreground/90 transition-colors whitespace-nowrap">
                       {ord.customer.email}
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-foreground">
+                    <td className="py-3.5 px-4 font-medium text-foreground whitespace-nowrap">
                       {ord.items.length}
                     </td>
-                    <td className="py-3.5 px-4 font-semibold text-foreground">
+                    <td className="py-3.5 px-4 font-semibold text-foreground whitespace-nowrap">
                       {ord.total}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
                       <span
                         className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getPaymentBadge(
                           ord.payment.status
@@ -149,7 +149,7 @@ export function OrderListTable({ orders }: OrderListTableProps) {
                         {ord.payment.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
                       {currentStage ? (
                         <span
                           className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${stageBadge}`}
@@ -162,7 +162,7 @@ export function OrderListTable({ orders }: OrderListTableProps) {
                         </span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                    <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm whitespace-nowrap">
                       {ord.date}
                     </td>
                   </tr>
@@ -178,7 +178,7 @@ export function OrderListTable({ orders }: OrderListTableProps) {
         <span>
           Showing {orders.length === 0 ? 0 : startIndex + 1} to {endIndex} of {orders.length} orders
         </span>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
           <button
             type="button"
             disabled={validPage <= 1}
@@ -188,10 +188,10 @@ export function OrderListTable({ orders }: OrderListTableProps) {
             Previous
           </button>
           
-          <div className="flex items-center gap-1 px-1">
+          <div className="flex flex-wrap items-center justify-center gap-1 px-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum, idx) => (
               <React.Fragment key={pageNum}>
-                {idx > 0 && <span className="text-muted-foreground/60 select-none">·</span>}
+                {idx > 0 && <span className="text-muted-foreground/60 select-none hidden sm:inline">·</span>}
                 <button
                   type="button"
                   onClick={() => setCurrentPage(pageNum)}

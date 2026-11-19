@@ -202,7 +202,7 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
       )}
 
       {/* Main Card */}
-      <div className="rounded-md border border-border/80 bg-card p-6 sm:p-7 text-card-foreground shadow-sm space-y-6">
+      <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 lg:p-7 text-card-foreground shadow-sm space-y-6">
         {/* Title: "Edit staff details" with Active/Deactivated badge */}
         <div className="flex items-center justify-between pb-2 border-b border-border/60">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
@@ -224,11 +224,11 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
           </div>
         </div>
 
-        {/* 2. Detail fields: Full name, Phone, Email */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* 2. Detail fields: Full name, Phone, Email (2 in a row on mobile) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
           {/* Full name: click to edit */}
           <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground block font-normal">
+            <label className="text-xs text-muted-foreground block font-normal truncate">
               Full name
             </label>
             {!isEditingName ? (
@@ -237,14 +237,14 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                   setTempName(staff.name)
                   setIsEditingName(true)
                 }}
-                className="group flex items-center justify-between p-2.5 rounded-md border border-border/80 bg-[#131418] cursor-pointer hover:border-primary/50 transition-colors"
+                className="group flex items-center justify-between p-2 sm:p-2.5 rounded-md border border-border/80 bg-[#131418] cursor-pointer hover:border-primary/50 transition-colors"
                 title="Click to edit full name"
               >
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
                   {staff.name}
                 </span>
-                <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
-                  <span>Click to edit</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1 shrink-0 ml-1">
+                  <span>Edit</span>
                 </span>
               </div>
             ) : (
@@ -256,9 +256,9 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                     onChange={(e) => setTempName(e.target.value)}
                     autoFocus
                     placeholder="Enter full name"
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
@@ -266,14 +266,14 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                   <button
                     type="button"
                     onClick={handleSaveName}
-                    className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm shadow-red-950/30"
+                    className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium px-3 py-1.5 transition-colors cursor-pointer shadow-sm shadow-red-950/30"
                   >
                     Save
                   </button>
                   <button
                     type="button"
                     onClick={handleCancelName}
-                    className="rounded-md border border-border/80 bg-card/80 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm"
+                    className="rounded-md border border-border/80 bg-card/80 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3 py-1.5 transition-colors cursor-pointer shadow-sm"
                   >
                     Cancel
                   </button>
@@ -284,7 +284,7 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
 
           {/* Phone: click to edit */}
           <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground block font-normal">
+            <label className="text-xs text-muted-foreground block font-normal truncate">
               Phone
             </label>
             {!isEditingPhone ? (
@@ -293,14 +293,14 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                   setTempPhone(staff.phone || "+1 (555) 000-0000")
                   setIsEditingPhone(true)
                 }}
-                className="group flex items-center justify-between p-2.5 rounded-md border border-border/80 bg-[#131418] cursor-pointer hover:border-primary/50 transition-colors"
+                className="group flex items-center justify-between p-2 sm:p-2.5 rounded-md border border-border/80 bg-[#131418] cursor-pointer hover:border-primary/50 transition-colors"
                 title="Click to edit phone number"
               >
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-xs sm:text-sm font-medium text-foreground truncate">
                   {staff.phone || "+1 (555) 000-0000"}
                 </span>
-                <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
-                  <span>Click to edit</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1 shrink-0 ml-1">
+                  <span>Edit</span>
                 </span>
               </div>
             ) : (
@@ -312,9 +312,9 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                     onChange={(e) => setTempPhone(e.target.value)}
                     autoFocus
                     placeholder="+1 (555) 000-0000"
-                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3 pr-20 focus:pr-3 py-2 text-xs sm:text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] sm:text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                     Click to edit
                   </span>
                 </div>
@@ -322,14 +322,14 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                   <button
                     type="button"
                     onClick={handleSavePhone}
-                    className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm shadow-red-950/30"
+                    className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium px-3 py-1.5 transition-colors cursor-pointer shadow-sm shadow-red-950/30"
                   >
                     Save
                   </button>
                   <button
                     type="button"
                     onClick={handleCancelPhone}
-                    className="rounded-md border border-border/80 bg-card/80 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3.5 py-1.5 transition-colors cursor-pointer shadow-sm"
+                    className="rounded-md border border-border/80 bg-card/80 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3 py-1.5 transition-colors cursor-pointer shadow-sm"
                   >
                     Cancel
                   </button>
@@ -339,14 +339,14 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
           </div>
 
           {/* Email: read-only with note */}
-          <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground block font-normal">
+          <div className="space-y-1.5 col-span-2 md:col-span-1">
+            <label className="text-xs text-muted-foreground block font-normal truncate">
               Email
             </label>
-            <div className="p-2.5 rounded-md border border-border/60 bg-[#131418]/60 cursor-not-allowed">
-              <span className="text-sm text-muted-foreground">{staff.email}</span>
+            <div className="p-2 sm:p-2.5 rounded-md border border-border/60 bg-[#131418]/60 cursor-not-allowed">
+              <span className="text-xs sm:text-sm text-muted-foreground truncate block">{staff.email}</span>
             </div>
-            <span className="text-[11px] text-muted-foreground/80 mt-1 block">
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground/80 mt-1 block">
               Cannot be changed
             </span>
           </div>

@@ -187,7 +187,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
       </div>
 
       {/* Main Order Card */}
-      <div className="rounded-md border border-border/80 bg-card p-6 text-card-foreground shadow-sm space-y-6">
+      <div className="rounded-md border border-border/80 bg-card p-4 sm:p-6 text-card-foreground shadow-sm space-y-6">
         {/* Top Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 gap-3 border-b border-border/60">
           <div className="flex flex-wrap items-center gap-3">
@@ -217,22 +217,25 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
             className="inline-flex items-center justify-center gap-2 rounded-md border border-primary/40 bg-primary/10 hover:bg-primary/20 text-foreground hover:text-white text-xs sm:text-sm font-medium px-4 py-2 transition-all shadow-sm active:scale-[0.98] w-fit group"
             title="Open this order in Production queue to update stage"
           >
-            <p>Go to Production Page and update the current Stage</p>
+            <span>
+              <span className="hidden sm:inline">Go to Production Page and update the current Stage</span>
+              <span className="sm:hidden">Update Stage in Production</span>
+            </span>
             <ArrowRight className="size-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
-        {/* Customer / Shipping / Payment Metadata: 3 Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+        {/* Customer / Shipping / Payment Metadata (2 items per row on mobile) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 pt-2">
           {/* Customer */}
           <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground block">
+            <span className="text-xs font-normal text-muted-foreground block truncate">
               Customer
             </span>
-            <p className="text-sm font-medium text-foreground leading-tight">
+            <p className="text-xs sm:text-sm font-medium text-foreground leading-tight truncate">
               {order.customer.email}
             </p>
-            <p className="text-sm font-normal text-muted-foreground">
+            <p className="text-xs sm:text-sm font-normal text-muted-foreground truncate">
               {order.customer.name}, {order.customer.phone}
             </p>
             <div className="pt-2">
@@ -242,42 +245,42 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                     ? `/dashboard/customers/${order.customer.cleanId}`
                     : `/dashboard/customers?search=${encodeURIComponent(order.customer.email)}`
                 }
-                className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-secondary/60 hover:bg-secondary hover:border-primary/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-all cursor-pointer shadow-xs group w-fit"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-secondary/60 hover:bg-secondary hover:border-primary/40 px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-medium text-foreground transition-all cursor-pointer shadow-xs group w-fit"
                 title={`View customer details for ${order.customer.name}`}
               >
-                <User className="size-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                <span>Customer details</span>
-                <ArrowRight className="size-3 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-transform" />
+                <User className="size-3 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                <span className="truncate">Customer details</span>
+                <ArrowRight className="size-3 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-transform shrink-0" />
               </Link>
             </div>
           </div>
 
           {/* Ship to */}
           <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground block">
+            <span className="text-xs font-normal text-muted-foreground block truncate">
               Ship to
             </span>
-            <p className="text-sm font-medium text-foreground leading-tight">
+            <p className="text-xs sm:text-sm font-medium text-foreground leading-tight truncate">
               {order.shipping.address}
             </p>
-            <p className="text-sm font-normal text-muted-foreground">
+            <p className="text-xs sm:text-sm font-normal text-muted-foreground truncate">
               {order.shipping.cityStateZip}, {order.shipping.country}
             </p>
           </div>
 
           {/* Payment */}
-          <div className="space-y-1">
-            <span className="text-xs font-normal text-muted-foreground block">
+          <div className="space-y-1 col-span-2 md:col-span-1">
+            <span className="text-xs font-normal text-muted-foreground block truncate">
               Payment
             </span>
-            <p className="text-sm font-medium text-foreground leading-tight">
+            <p className="text-xs sm:text-sm font-medium text-foreground leading-tight">
               Stripe ref {order.payment.stripeRef}
             </p>
             <a
               href={order.payment.stripeUrl || "https://stripe.com"}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-normal text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+              className="inline-flex items-center gap-1 text-xs sm:text-sm font-normal text-blue-400 hover:text-blue-300 hover:underline transition-colors"
             >
               <span>Open in Stripe</span>
               <ExternalLink className="size-3" />
@@ -295,12 +298,12 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                  <th className="py-3.5 px-4 font-medium">Artwork</th>
-                  <th className="py-3.5 px-4 font-medium">Size</th>
-                  <th className="py-3.5 px-4 font-medium">Qty</th>
-                  <th className="py-3.5 px-4 font-medium">Unit</th>
-                  <th className="py-3.5 px-4 font-medium">Line total</th>
-                  <th className="py-3.5 px-4 font-medium w-10 text-right"></th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Artwork</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Size</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Qty</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Unit</th>
+                  <th className="py-3.5 px-4 font-medium whitespace-nowrap">Line total</th>
+                  <th className="py-3.5 px-4 font-medium w-10 text-right whitespace-nowrap"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -310,7 +313,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                     className="hover:bg-secondary/20 transition-colors"
                   >
                     {/* Artwork name & poster photo thumbnail (Clickable trigger for pop up modal) */}
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
                       <button
                         type="button"
                         onClick={() => setPreviewArtwork(art)}
@@ -349,23 +352,23 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                       </button>
                     </td>
 
-                    <td className="py-3.5 px-4 font-normal text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-normal text-foreground text-sm whitespace-nowrap">
                       {art.size}
                     </td>
 
-                    <td className="py-3.5 px-4 font-normal text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-normal text-foreground text-sm whitespace-nowrap">
                       {art.qty}
                     </td>
 
-                    <td className="py-3.5 px-4 font-normal text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-normal text-foreground text-sm whitespace-nowrap">
                       {art.unitPrice}
                     </td>
 
-                    <td className="py-3.5 px-4 font-medium text-foreground text-sm">
+                    <td className="py-3.5 px-4 font-medium text-foreground text-sm whitespace-nowrap">
                       {art.lineTotal}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           type="button"
@@ -399,7 +402,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
           </div>
 
           {/* Subtotal / Shipping / Total Line */}
-          <div className="flex items-center justify-end gap-6 pt-5 pb-1 text-sm">
+          <div className="flex flex-wrap items-center justify-end gap-3 sm:gap-6 pt-5 pb-1 text-xs sm:text-sm">
             <span className="font-normal text-muted-foreground">
               Subtotal{" "}
               <span className="font-normal text-foreground">
@@ -412,7 +415,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                 {order.shippingFee}
               </span>
             </span>
-            <span className="font-bold text-foreground text-sm sm:text-base ml-2">
+            <span className="font-bold text-foreground text-sm sm:text-base ml-1 sm:ml-2">
               Total {order.total}
             </span>
           </div>
@@ -452,7 +455,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                   placeholder="Add a note for staff"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  className="w-full rounded-md border border-border/80 bg-background/50 p-3 pr-24 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-y"
+                  className="w-full rounded-md border border-border/80 bg-background/50 p-3 pr-24 focus:pr-3 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-150 resize-y"
                 />
                 <span className="pointer-events-none absolute right-3 top-3 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
                   Click to edit

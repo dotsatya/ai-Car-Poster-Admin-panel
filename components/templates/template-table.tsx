@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { TemplatePhoto } from "@/lib/templatePhotos"
 import { Edit2 } from "lucide-react"
 
@@ -17,6 +18,7 @@ export function TemplateTable({
   templates,
   onEditTemplate,
 }: TemplateTableProps) {
+  const router = useRouter()
   const [currentPage, setCurrentPage] = React.useState(1)
 
   // Reset to page 1 whenever the templates list length changes
@@ -69,12 +71,12 @@ export function TemplateTable({
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-              <th className="py-3.5 px-4 font-medium">Template</th>
-              <th className="py-3.5 px-4 font-medium">Category</th>
-              <th className="py-3.5 px-4 font-medium">Available Sizes</th>
-              <th className="py-3.5 px-4 font-medium">Starting Price</th>
-              <th className="py-3.5 px-4 font-medium">Status</th>
-              <th className="py-3.5 px-4 font-medium text-right">Actions</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Template</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Category</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Available Sizes</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Starting Price</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Status</th>
+              <th className="py-3.5 px-4 font-medium text-right whitespace-nowrap">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
@@ -92,11 +94,17 @@ export function TemplateTable({
               return (
                 <tr
                   key={tpl.id}
-                  onClick={() => onEditTemplate?.(tpl)}
+                  onClick={() => {
+                    if (onEditTemplate) {
+                      onEditTemplate(tpl)
+                    } else {
+                      router.push(`/dashboard/templates/${tpl.id}`)
+                    }
+                  }}
                   className="hover:bg-secondary/40 cursor-pointer transition-colors group"
                 >
                   {/* Template Image & Name */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
                       <div className="relative aspect-[3/4] w-10 sm:w-12 shrink-0 rounded-sm overflow-hidden bg-black/80 border border-border/70 group-hover:border-primary/50 transition-colors">
                         <Image
@@ -108,7 +116,7 @@ export function TemplateTable({
                           className="object-cover"
                         />
                       </div>
-                      <div className="flex flex-col min-w-0">
+                      <div className="flex flex-col min-w-0 max-w-[200px] sm:max-w-xs">
                         <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
                           {tpl.name}
                         </span>
@@ -120,14 +128,14 @@ export function TemplateTable({
                   </td>
 
                   {/* Category */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-secondary/80 border border-border/60 text-foreground">
                       {tpl.category}
                     </span>
                   </td>
 
                   {/* Available Sizes */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="flex flex-wrap items-center gap-1 max-w-xs">
                       {sizesList.map((sz) => (
                         <span
@@ -142,22 +150,26 @@ export function TemplateTable({
 
 
                   {/* Starting Price */}
-                  <td className="py-3.5 px-4 font-mono font-semibold text-foreground text-sm">
+                  <td className="py-3.5 px-4 font-mono font-semibold text-foreground text-sm whitespace-nowrap">
                     {displayPrice}
                   </td>
 
                   {/* Status */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     {getStatusBadge(tpl.status)}
                   </td>
 
                   {/* Actions */}
-                  <td className="py-3.5 px-4 text-right">
+                  <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
-                        onEditTemplate?.(tpl)
+                        if (onEditTemplate) {
+                          onEditTemplate(tpl)
+                        } else {
+                          router.push(`/dashboard/templates/${tpl.id}`)
+                        }
                       }}
                       className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-secondary/60 hover:bg-secondary hover:border-primary/40 text-foreground text-xs font-medium px-3 py-1.5 transition-colors cursor-pointer shadow-sm"
                     >

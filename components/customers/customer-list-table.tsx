@@ -32,11 +32,11 @@ export function CustomerListTable({ customers }: CustomerListTableProps) {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-              <th className="py-3.5 px-4 font-medium">Customer</th>
-              <th className="py-3.5 px-4 font-medium">Account</th>
-              <th className="py-3.5 px-4 font-medium">Posters</th>
-              <th className="py-3.5 px-4 font-medium">Orders</th>
-              <th className="py-3.5 px-4 font-medium">Joined</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Customer</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Account</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Posters</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Orders</th>
+              <th className="py-3.5 px-4 font-medium whitespace-nowrap">Joined</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
@@ -54,7 +54,7 @@ export function CustomerListTable({ customers }: CustomerListTableProps) {
                   className="hover:bg-secondary/40 transition-colors cursor-pointer group"
                 >
                   {/* Customer column: Name & Email */}
-                  <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors">
+                  <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors whitespace-nowrap">
                     <div>{cust.name}</div>
                     <div className="text-xs text-muted-foreground font-normal mt-0.5 group-hover:text-foreground/90 transition-colors">
                       {cust.email}
@@ -62,7 +62,7 @@ export function CustomerListTable({ customers }: CustomerListTableProps) {
                   </td>
 
                   {/* Account Status Badge */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     {cust.account === "Active" ? (
                       <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
                         Active
@@ -75,17 +75,17 @@ export function CustomerListTable({ customers }: CustomerListTableProps) {
                   </td>
 
                   {/* Posters Count */}
-                  <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                  <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                     {cust.posters}
                   </td>
 
                   {/* Orders Count */}
-                  <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
+                  <td className="py-3.5 px-4 font-semibold text-foreground text-sm whitespace-nowrap">
                     {cust.orders ?? cust.ordersList?.length ?? 0}
                   </td>
 
                   {/* Joined Date */}
-                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
+                  <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm whitespace-nowrap">
                     {cust.joined}
                   </td>
                 </tr>
@@ -100,7 +100,7 @@ export function CustomerListTable({ customers }: CustomerListTableProps) {
         <span>
           Showing {customers.length === 0 ? 0 : startIndex + 1} to {endIndex} of {customers.length} customers
         </span>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
           <button
             type="button"
             disabled={validPage <= 1}
@@ -110,10 +110,10 @@ export function CustomerListTable({ customers }: CustomerListTableProps) {
             Previous
           </button>
 
-          <div className="flex items-center gap-1 px-1">
+          <div className="flex flex-wrap items-center justify-center gap-1 px-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum, idx) => (
               <React.Fragment key={pageNum}>
-                {idx > 0 && <span className="text-muted-foreground/60 select-none">·</span>}
+                {idx > 0 && <span className="text-muted-foreground/60 select-none hidden sm:inline">·</span>}
                 <button
                   type="button"
                   onClick={() => setCurrentPage(pageNum)}

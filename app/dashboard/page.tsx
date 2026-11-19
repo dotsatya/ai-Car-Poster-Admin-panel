@@ -189,8 +189,8 @@ export default function DashboardPage() {
 
         {/* Date Filter: Last 1 year, Last 6 mon, Last 30 days, Last week */}
         <div className="flex items-center gap-1.5 self-start sm:self-auto">
-          {/* Segmented Pill Switcher for Tablet & Desktop */}
-          <div className="hidden sm:inline-flex items-center rounded-md border border-border/80 bg-card/80 p-1 shadow-sm">
+          {/* Segmented Pill Switcher for Desktop (hidden on mobile and tablet) */}
+          <div className="hidden lg:inline-flex items-center rounded-md border border-border/80 bg-card/80 p-1 shadow-sm">
             {timeRanges.map((range) => {
               const isActive = selectedRange === range.id
               return (
@@ -210,8 +210,8 @@ export default function DashboardPage() {
             })}
           </div>
 
-          {/* Compact Select Dropdown for Mobile Viewports */}
-          <div className="relative sm:hidden">
+          {/* Compact Select Dropdown for Mobile & Tablet Viewports */}
+          <div className="relative lg:hidden">
             <select
               value={selectedRange}
               onChange={(e) => setSelectedRange(e.target.value)}
@@ -233,25 +233,27 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 5 KPI Cards in a single horizontal row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {kpis.map((kpi) => (
+      {/* 5 KPI Cards in a responsive 2-column grid on mobile, 5 on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-4">
+        {kpis.map((kpi, idx) => (
           <div
             key={kpi.title}
-            className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm hover:border-primary/30 transition-colors flex flex-col justify-between h-full"
+            className={`rounded-md border border-border/80 bg-card p-3.5 sm:p-5 text-card-foreground shadow-sm hover:border-primary/30 transition-colors flex flex-col justify-between h-full ${
+              idx === 4 ? "col-span-2 lg:col-span-1" : ""
+            }`}
           >
             <div>
               <span
                 title={kpi.title}
-                className="text-xs font-medium text-muted-foreground uppercase tracking-[0.03em] block truncate"
+                className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-[0.03em] block truncate"
               >
                 {kpi.title}
               </span>
-              <div className="text-2xl lg:text-[1.65rem] xl:text-3xl font-semibold tracking-tight text-foreground mt-2">
+              <div className="text-xl sm:text-2xl lg:text-[1.65rem] xl:text-3xl font-semibold tracking-tight text-foreground mt-1.5 sm:mt-2">
                 {kpi.value}
               </div>
             </div>
-            <p className="text-xs font-normal text-emerald-400 mt-1.5 flex items-center gap-1">
+            <p className="text-[11px] sm:text-xs font-normal text-emerald-400 mt-1 sm:mt-1.5 flex items-center gap-1">
               <span>{kpi.delta}</span>
             </p>
           </div>
@@ -261,7 +263,7 @@ export default function DashboardPage() {
       {/* Two Middle Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Chart: Generations per day */}
-        <div className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm flex flex-col justify-between hover:border-border transition-colors">
+        <div className="rounded-md border border-border/80 bg-card p-4 sm:p-5 text-card-foreground shadow-sm flex flex-col justify-between hover:border-border transition-colors overflow-hidden">
           <div>
             <h2 className="text-base font-semibold text-foreground">
               Generations per day
@@ -280,7 +282,7 @@ export default function DashboardPage() {
           </div>
 
           {/* SVG Line Chart */}
-          <div className="w-full mt-4">
+          <div className="w-full mt-4 overflow-hidden">
             <svg
               viewBox="0 0 500 220"
               className="w-full h-auto overflow-visible select-none"
@@ -417,7 +419,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Right Chart: Revenue per week */}
-        <div className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm flex flex-col justify-between hover:border-border transition-colors">
+        <div className="rounded-md border border-border/80 bg-card p-4 sm:p-5 text-card-foreground shadow-sm flex flex-col justify-between hover:border-border transition-colors overflow-hidden">
           <div>
             <h2 className="text-base font-semibold text-foreground">
               Revenue per week
@@ -425,7 +427,7 @@ export default function DashboardPage() {
           </div>
 
           {/* SVG Bar Chart with Brand Red Palette */}
-          <div className="w-full mt-4">
+          <div className="w-full mt-4 overflow-hidden">
             <svg
               viewBox="0 0 500 220"
               className="w-full h-auto overflow-visible select-none"
@@ -503,14 +505,14 @@ export default function DashboardPage() {
       {/* Middle Row: Order status & Production overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Order status */}
-        <div className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm">
+        <div className="rounded-md border border-border/80 bg-card p-4 sm:p-5 text-card-foreground shadow-sm">
           <h2 className="text-base font-semibold text-foreground mb-4">
             Order status
           </h2>
           <div className="space-y-4">
             {orderStatuses.map((item) => (
-              <div key={item.label} className="flex items-center gap-4">
-                <span className="w-24 text-sm font-normal text-muted-foreground">
+              <div key={item.label} className="flex items-center gap-3 sm:gap-4">
+                <span className="w-20 sm:w-24 text-xs sm:text-sm font-normal text-muted-foreground truncate shrink-0">
                   {item.label}
                 </span>
                 <div className="flex-1 h-3 rounded-md bg-secondary border border-border/40 overflow-hidden">
@@ -519,7 +521,7 @@ export default function DashboardPage() {
                     style={{ width: `${item.pct}%` }}
                   />
                 </div>
-                <span className="w-10 text-right text-sm font-semibold text-foreground">
+                <span className="w-10 text-right text-xs sm:text-sm font-semibold text-foreground shrink-0">
                   {item.count}
                 </span>
               </div>
@@ -528,14 +530,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Production overview */}
-        <div className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm">
+        <div className="rounded-md border border-border/80 bg-card p-4 sm:p-5 text-card-foreground shadow-sm">
           <h2 className="text-base font-semibold text-foreground mb-4">
             Production overview
           </h2>
           <div className="space-y-4">
             {productionStatuses.map((item) => (
-              <div key={item.label} className="flex items-center gap-4">
-                <span className="w-28 text-sm font-normal text-muted-foreground">
+              <div key={item.label} className="flex items-center gap-3 sm:gap-4">
+                <span className="w-24 sm:w-28 text-xs sm:text-sm font-normal text-muted-foreground truncate shrink-0">
                   {item.label}
                 </span>
                 <div className="flex-1 h-3 rounded-md bg-secondary border border-border/40 overflow-hidden">
@@ -544,7 +546,7 @@ export default function DashboardPage() {
                     style={{ width: `${item.pct}%` }}
                   />
                 </div>
-                <span className="w-10 text-right text-sm font-semibold text-foreground">
+                <span className="w-10 text-right text-xs sm:text-sm font-semibold text-foreground shrink-0">
                   {item.count}
                 </span>
               </div>
@@ -554,7 +556,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom Card: Recent orders */}
-      <div className="rounded-md border border-border/80 bg-card p-5 text-card-foreground shadow-sm">
+      <div className="rounded-md border border-border/80 bg-card p-4 sm:p-5 text-card-foreground shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-foreground">
             Recent orders
@@ -569,11 +571,11 @@ export default function DashboardPage() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                <th className="py-3.5 px-4 font-medium">Order</th>
-                <th className="py-3.5 px-4 font-medium">Customer</th>
-                <th className="py-3.5 px-4 font-medium">Items</th>
-                <th className="py-3.5 px-4 font-medium">Total</th>
-                <th className="py-3.5 px-4 font-medium">Stage</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Order</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Customer</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Items</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Total</th>
+                <th className="py-3.5 px-4 font-medium whitespace-nowrap">Stage</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -583,15 +585,15 @@ export default function DashboardPage() {
                   onClick={() => router.push(`/dashboard/orders/${ord.order.replace("#", "")}`)}
                   className="hover:bg-secondary/40 transition-colors cursor-pointer group"
                 >
-                  <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors">
+                  <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary transition-colors whitespace-nowrap">
                     {ord.order}
                   </td>
-                  <td className="py-3.5 px-4 font-normal text-muted-foreground group-hover:text-foreground/90 transition-colors">
+                  <td className="py-3.5 px-4 font-normal text-muted-foreground group-hover:text-foreground/90 transition-colors whitespace-nowrap">
                     {ord.customer}
                   </td>
-                  <td className="py-3.5 px-4 font-medium text-foreground">{ord.items}</td>
-                  <td className="py-3.5 px-4 font-semibold text-foreground">{ord.total}</td>
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 font-medium text-foreground whitespace-nowrap">{ord.items}</td>
+                  <td className="py-3.5 px-4 font-semibold text-foreground whitespace-nowrap">{ord.total}</td>
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <span
                       className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${ord.badgeClass}`}
                     >

@@ -25,16 +25,16 @@ export function AiFilters({
   onTimeFilterChange,
 }: AiFiltersProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
       {/* 1. Search Input */}
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/60" />
+        <Search className="pointer-events-none absolute left-2.5 sm:left-3.5 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/60" />
         <input
           type="text"
-          placeholder="Search by customer email or job ID"
+          placeholder="Search customer or job ID"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full rounded-md border border-border/80 bg-card/60 pl-9 pr-3.5 py-2 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+          className="w-full rounded-md border border-border/80 bg-card/60 pl-8 sm:pl-9 pr-2.5 sm:pr-3.5 py-2 text-xs sm:text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
         />
       </div>
 
@@ -43,7 +43,7 @@ export function AiFilters({
         <select
           value={stateFilter}
           onChange={(e) => onStateFilterChange(e.target.value)}
-          className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+          className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-2.5 sm:pl-3.5 pr-7 sm:pr-9 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
         >
           <option value="all" className="bg-[#121315] text-foreground">
             All states
@@ -61,7 +61,7 @@ export function AiFilters({
             Queued
           </option>
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+        <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
       </div>
 
       {/* 3. Type Filter */}
@@ -69,7 +69,7 @@ export function AiFilters({
         <select
           value={typeFilter}
           onChange={(e) => onTypeFilterChange(e.target.value)}
-          className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+          className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-2.5 sm:pl-3.5 pr-7 sm:pr-9 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
         >
           <option value="all" className="bg-[#121315] text-foreground">
             All types
@@ -81,7 +81,7 @@ export function AiFilters({
             Combined
           </option>
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+        <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
       </div>
 
       {/* 4. Time Filter */}
@@ -89,7 +89,7 @@ export function AiFilters({
         <select
           value={timeFilter}
           onChange={(e) => onTimeFilterChange(e.target.value)}
-          className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+          className="w-full appearance-none rounded-md border border-border/80 bg-card/60 pl-2.5 sm:pl-3.5 pr-7 sm:pr-9 py-2 text-xs sm:text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer"
         >
           <option value="today" className="bg-[#121315] text-foreground">
             Today
@@ -107,7 +107,7 @@ export function AiFilters({
             All time
           </option>
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+        <ChevronDown className="pointer-events-none absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground/70" />
       </div>
     </div>
   )

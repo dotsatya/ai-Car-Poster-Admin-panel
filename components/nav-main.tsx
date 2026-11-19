@@ -19,6 +19,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { ChevronRight } from "lucide-react"
 
@@ -62,6 +63,13 @@ function renderIcon(icon: NavItem["icon"], isActive: boolean) {
 
 export function NavMain({ groups }: NavMainProps) {
   const pathname = usePathname()
+  const { isMobile, setOpenMobile } = useSidebar()
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
 
   return (
     <>
@@ -93,7 +101,7 @@ export function NavMain({ groups }: NavMainProps) {
                             ? "bg-primary/10 text-primary font-medium hover:bg-primary/15"
                             : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/60"
                         }`}
-                        render={<Link href={item.url} />}
+                        render={<Link href={item.url} onClick={handleLinkClick} />}
                       >
                         {renderIcon(item.icon, isCurrentActive)}
                         <span>{item.title}</span>
@@ -110,7 +118,7 @@ export function NavMain({ groups }: NavMainProps) {
                         <SidebarMenuSub className="border-sidebar-border/60">
                           {item.items?.map((subItem) => (
                             <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton render={<Link href={subItem.url} />}>
+                              <SidebarMenuSubButton render={<Link href={subItem.url} onClick={handleLinkClick} />}>
                                 <span>{subItem.title}</span>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
@@ -131,7 +139,7 @@ export function NavMain({ groups }: NavMainProps) {
                           ? "bg-primary/10 text-primary font-medium hover:bg-primary/15 hover:text-primary before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-0.5 before:rounded-full before:bg-primary"
                           : "text-muted-foreground/90 hover:text-foreground hover:bg-sidebar-accent/60"
                       }`}
-                      render={<Link href={item.url} />}
+                      render={<Link href={item.url} onClick={handleLinkClick} />}
                     >
                       {renderIcon(item.icon, isCurrentActive)}
                       <span className="truncate">{item.title}</span>
