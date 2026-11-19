@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   Mail,
   ChevronDown,
+  ChevronUp,
   Check,
   X,
   Eye,
@@ -139,6 +140,7 @@ export function ProductionOrderDetail({
   >("");
 
   // Emergency change stage state
+  const [isEmergencyExpanded, setIsEmergencyExpanded] = React.useState(false);
   const [emergencyTargetStage, setEmergencyTargetStage] = React.useState<
     ProductionStage | ""
   >("");
@@ -179,6 +181,7 @@ export function ProductionOrderDetail({
     setSelectedTargetStage("");
     setEmergencyTargetStage("");
     setEmergencyReason("");
+    setIsEmergencyExpanded(false);
 
     showNotification(
       `Emergency reversal applied: Order #${order.cleanId} rolled back to "${emergencyTargetStage}".`,
@@ -464,161 +467,200 @@ export function ProductionOrderDetail({
           })}
         </div>
 
-        {/* Action Row: Move to next stage selector, action button, and Mark as saved */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-3 pb-2 border-y border-border/70">
-          <div className="flex flex-wrap items-center gap-3">
+        {/* Move to next stage Section */}
+        <div className="flex flex-col gap-2.5 pt-3 pb-3 border-y border-border/70">
+          <div className="flex items-center justify-between gap-3">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Move to next stage
             </h3>
-            <div>
-              {remainingStages.length > 0 ? (
-                <div className="flex flex-wrap items-center gap-2.5">
-                  {/* Selector for the next remaining stages */}
-                  <div className="relative min-w-[210px]">
-                    <select
-                      value={selectedTargetStage}
-                      onChange={(e) => {
-                        setSelectedTargetStage(
-                          e.target.value as ProductionStage,
-                        );
-                        setIsSaved(false);
-                      }}
-                      className="w-full appearance-none rounded-md border border-border/90 bg-card px-3.5 py-2 text-sm font-medium text-foreground pr-9 focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer shadow-sm"
-                    >
-                      <option value="" disabled>
-                        Select next stage...
-                      </option>
-                      {remainingStages.map((st) => (
-                        <option
-                          key={st.key}
-                          value={st.key}
-                          className="bg-[#121315] text-foreground py-1"
-                        >
-                          {st.key}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                  </div>
 
-                  {/* Mark as saved Button */}
-                  <button
-                    type="button"
-                    onClick={handleMarkAsSaved}
-                    className={`rounded-md border text-sm px-3.5 py-2 font-medium flex items-center gap-1.5 transition-all shadow-sm cursor-pointer ${
-                      isSaved
-                        ? "border-emerald-700/60 bg-emerald-950/40 text-emerald-400 ring-1 ring-emerald-500/20"
-                        : "border-primary/60 bg-primary/10 hover:bg-primary/20 text-foreground ring-1 ring-primary/30"
-                    }`}
-                    title="Click to save and apply selected stage"
-                  >
-                    <CheckCircle2
-                      className={`size-4 ${isSaved ? "text-emerald-400" : "text-primary"}`}
-                    />
-                    <span>{isSaved ? "Marked as saved" : "Mark as saved"}</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2.5">
-                  <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium px-3 py-1.5 rounded-md border border-emerald-900/50 bg-emerald-950/50">
-                    <CheckCircle2 className="size-3.5" />
-                    Order fully completed & delivered
-                  </span>
-                </div>
-              )}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Mail className="size-3.5 text-muted-foreground/70 shrink-0" />
+              <span>
+                Customer gets an email automatically on printing, shipping &
+                delivery
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Mail className="size-3.5 text-muted-foreground/70 shrink-0" />
-            <span>
-              Customer gets an email automatically on printing, shipping &
-              delivery
-            </span>
-          </div>
-        </div>
-
-        {/* Separate Section: Emergency Change Stage (Always Open) */}
-        <div className="rounded-md border border-amber-500/35 bg-amber-950/15 p-4 flex flex-col gap-3">
-          <div className="flex items-center gap-2.5 border-b border-amber-500/20 pb-2.5">
-            <div className="p-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 shrink-0">
-              <AlertTriangle className="size-4 text-amber-400" />
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-amber-300">
-                Emergency Change Stage
-              </h4>
-              <p className="text-xs text-muted-foreground">
-                Roll back this order to a previously completed state to reverse
-                the stage when an issue arises.
-              </p>
-            </div>
-          </div>
-
-          {previousStages.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center pt-1">
-              {/* Select previous stage */}
-              <div className="md:col-span-5 relative">
-                <span className="text-[11px] font-medium text-amber-300/80 block mb-1">
-                  Select previously completed state:
-                </span>
-                <div className="relative">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {remainingStages.length > 0 ? (
+              <div className="flex flex-wrap items-center gap-2.5">
+                {/* Selector for the next remaining stages */}
+                <div className="relative min-w-[210px]">
                   <select
-                    value={emergencyTargetStage}
-                    onChange={(e) =>
-                      setEmergencyTargetStage(e.target.value as ProductionStage)
-                    }
-                    className="w-full appearance-none rounded-md border border-amber-600/40 bg-[#121315] px-3.5 py-2 text-sm font-medium text-foreground pr-9 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500/40 cursor-pointer shadow-sm"
+                    value={selectedTargetStage}
+                    onChange={(e) => {
+                      setSelectedTargetStage(e.target.value as ProductionStage);
+                      setIsSaved(false);
+                    }}
+                    className="w-full appearance-none rounded-md border border-border/90 bg-card px-3.5 py-2 text-sm font-medium text-foreground pr-9 focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer shadow-sm"
                   >
                     <option value="" disabled>
-                      Select stage to reverse to...
+                      Select next stage...
                     </option>
-                    {previousStages.map((st) => (
+                    {remainingStages.map((st) => (
                       <option
                         key={st.key}
                         value={st.key}
                         className="bg-[#121315] text-foreground py-1"
                       >
-                        Reverse to: {st.key}
+                        {st.key}
                       </option>
                     ))}
                   </select>
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 </div>
-              </div>
 
-              {/* Optional reason / note */}
-              <div className="md:col-span-4">
-                <span className="text-[11px] font-medium text-muted-foreground block mb-1">
-                  Reversal reason (optional):
-                </span>
-                <input
-                  type="text"
-                  value={emergencyReason}
-                  onChange={(e) => setEmergencyReason(e.target.value)}
-                  placeholder="e.g. Print defect, rework required"
-                  className="w-full rounded-md border border-border/80 bg-background/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-amber-500/60 focus:outline-none focus:ring-1 focus:ring-amber-500/30 transition-colors"
-                />
-              </div>
-
-              {/* Confirm Reversal Button */}
-              <div className="md:col-span-3 flex items-end gap-2 pt-4 md:pt-0">
+                {/* Mark as saved Button */}
                 <button
                   type="button"
-                  onClick={handleConfirmEmergencyReversal}
-                  disabled={!emergencyTargetStage}
-                  className="w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-amber-600/60 bg-amber-600/20 hover:bg-amber-600/30 text-amber-200 text-sm font-medium px-4 py-2 transition-all shadow-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  onClick={handleMarkAsSaved}
+                  className={`rounded-md border text-sm px-3.5 py-2 font-medium flex items-center gap-1.5 transition-all shadow-sm cursor-pointer ${
+                    isSaved
+                      ? "border-emerald-700/60 bg-emerald-950/40 text-emerald-400 ring-1 ring-emerald-500/20"
+                      : "border-primary/60 bg-primary/10 hover:bg-primary/20 text-foreground ring-1 ring-primary/30"
+                  }`}
+                  title="Click to save and apply selected stage"
                 >
-                  <RotateCcw className="size-3.5" />
-                  <span>Confirm Reversal</span>
+                  <CheckCircle2
+                    className={`size-4 ${isSaved ? "text-emerald-400" : "text-primary"}`}
+                  />
+                  <span>{isSaved ? "Marked as saved" : "Mark as saved"}</span>
                 </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-2.5">
+                <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium px-3 py-1.5 rounded-md border border-emerald-900/50 bg-emerald-950/50">
+                  <CheckCircle2 className="size-3.5" />
+                  Order fully completed & delivered
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Separate Section: Emergency Change Stage (Collapsible) */}
+        <div className="rounded-md border border-amber-500/35 bg-amber-950/15 p-4 flex flex-col gap-3 transition-all">
+          <div
+            className={`flex items-center justify-between gap-3 cursor-pointer select-none ${
+              isEmergencyExpanded ? "border-b border-amber-500/20 pb-2.5" : ""
+            }`}
+            onClick={() => setIsEmergencyExpanded(!isEmergencyExpanded)}
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 shrink-0">
+                <AlertTriangle className="size-4 text-amber-400" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-amber-300">
+                  Emergency Change Stage
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  Roll back this order to a previously completed state to reverse
+                  the stage when an issue arises.
+                </p>
+              </div>
             </div>
-          ) : (
-            <div className="text-xs text-muted-foreground italic py-1">
-              Order is currently at the initial stage ({order.stage}). There are
-              no previously completed states to reverse to.
-            </div>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEmergencyExpanded(!isEmergencyExpanded);
+              }}
+              className="p-1.5 px-2.5 rounded-md border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-medium shrink-0"
+              title={
+                isEmergencyExpanded
+                  ? "Collapse emergency change stage"
+                  : "Expand emergency change stage"
+              }
+              aria-expanded={isEmergencyExpanded}
+            >
+              <span>{isEmergencyExpanded ? "Collapse" : "Expand"}</span>
+              {isEmergencyExpanded ? (
+                <ChevronUp className="size-4 text-amber-300" />
+              ) : (
+                <ChevronDown className="size-4 text-amber-300" />
+              )}
+            </button>
+          </div>
+
+          {isEmergencyExpanded && (
+            <>
+              {previousStages.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center pt-1">
+                  {/* Select previous stage */}
+                  <div className="md:col-span-5 relative">
+                    <span className="text-[11px] font-medium text-amber-300/80 block mb-1">
+                      Select previously completed state:
+                    </span>
+                    <div className="relative">
+                      <select
+                        value={emergencyTargetStage}
+                        onChange={(e) =>
+                          setEmergencyTargetStage(
+                            e.target.value as ProductionStage,
+                          )
+                        }
+                        className="w-full appearance-none rounded-md border border-amber-600/40 bg-[#121315] px-3.5 py-2 text-sm font-medium text-foreground pr-9 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500/40 cursor-pointer shadow-sm"
+                      >
+                        <option value="" disabled>
+                          Select stage to reverse to...
+                        </option>
+                        {previousStages.map((st) => (
+                          <option
+                            key={st.key}
+                            value={st.key}
+                            className="bg-[#121315] text-foreground py-1"
+                          >
+                            Reverse to: {st.key}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    </div>
+                  </div>
+
+                  {/* Optional reason / note */}
+                  <div className="md:col-span-4">
+                    <span className="text-[11px] font-medium text-muted-foreground block mb-1">
+                      Reversal reason (optional):
+                    </span>
+                    <div className="relative group">
+                      <input
+                        type="text"
+                        value={emergencyReason}
+                        onChange={(e) => setEmergencyReason(e.target.value)}
+                        placeholder="e.g. Print defect, rework required"
+                        className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-22 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-amber-500/60 focus:outline-none focus:ring-1 focus:ring-amber-500/30 transition-colors"
+                      />
+                      <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                        Click to edit
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Confirm Reversal Button */}
+                  <div className="md:col-span-3 flex items-end gap-2 pt-4 md:pt-0">
+                    <button
+                      type="button"
+                      onClick={handleConfirmEmergencyReversal}
+                      disabled={!emergencyTargetStage}
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-amber-600/60 bg-amber-600/20 hover:bg-amber-600/30 text-amber-200 text-sm font-medium px-4 py-2 transition-all shadow-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <RotateCcw className="size-3.5" />
+                      <span>Confirm Reversal</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-xs text-muted-foreground italic py-1">
+                  Order is currently at the initial stage ({order.stage}). There
+                  are no previously completed states to reverse to.
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -758,63 +800,73 @@ export function ProductionOrderDetail({
             Shipping & Carrier
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Ship to */}
-          <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground font-normal">
-              Ship to
-            </span>
-            <span className="text-sm font-medium text-foreground">
-              {order.shipping.name}
-            </span>
-            <span className="text-xs text-muted-foreground/90 leading-relaxed">
-              {order.shipping.address}
-            </span>
-          </div>
-
-          {/* Carrier */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground font-normal">
-              Carrier
-            </label>
-            <input
-              type="text"
-              value={carrier}
-              onChange={(e) => {
-                setCarrier(e.target.value);
-                setIsSaved(false);
-              }}
-              onBlur={handleSaveShipping}
-              placeholder="Carrier name"
-              className="w-full rounded-md border border-border/80 bg-background/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
-            />
-          </div>
-
-          {/* Tracking number */}
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between">
-              <label className="text-xs text-muted-foreground font-normal">
-                Tracking number
-              </label>
-              {shippingSaved && (
-                <span className="text-[10px] text-emerald-400 font-medium">
-                  Saved
-                </span>
-              )}
+            {/* Ship to */}
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground font-normal">
+                Ship to
+              </span>
+              <span className="text-sm font-medium text-foreground">
+                {order.shipping.name}
+              </span>
+              <span className="text-xs text-muted-foreground/90 leading-relaxed">
+                {order.shipping.address}
+              </span>
             </div>
-            <input
-              type="text"
-              value={trackingNumber}
-              onChange={(e) => {
-                setTrackingNumber(e.target.value);
-                setIsSaved(false);
-              }}
-              onBlur={handleSaveShipping}
-              placeholder="Enter when available"
-              className="w-full rounded-md border border-border/80 bg-background/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
-            />
+
+            {/* Carrier */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-muted-foreground font-normal">
+                Carrier
+              </label>
+              <div className="relative group">
+                <input
+                  type="text"
+                  value={carrier}
+                  onChange={(e) => {
+                    setCarrier(e.target.value);
+                    setIsSaved(false);
+                  }}
+                  onBlur={handleSaveShipping}
+                  placeholder="Carrier name"
+                  className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
+                />
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  Click to edit
+                </span>
+              </div>
+            </div>
+
+            {/* Tracking number */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <label className="text-xs text-muted-foreground font-normal">
+                  Tracking number
+                </label>
+                {shippingSaved && (
+                  <span className="text-[10px] text-emerald-400 font-medium">
+                    Saved
+                  </span>
+                )}
+              </div>
+              <div className="relative group">
+                <input
+                  type="text"
+                  value={trackingNumber}
+                  onChange={(e) => {
+                    setTrackingNumber(e.target.value);
+                    setIsSaved(false);
+                  }}
+                  onBlur={handleSaveShipping}
+                  placeholder="Enter when available"
+                  className="w-full rounded-md border border-border/80 bg-background/50 pl-3 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
+                />
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  Click to edit
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
         {/* Status history audit trail */}
         <div className="flex flex-col gap-2 pt-4 border-t border-border/80">

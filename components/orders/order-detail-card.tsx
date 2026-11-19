@@ -446,13 +446,18 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
               Internal notes
             </h3>
             <form onSubmit={handleSaveNote} className="space-y-2">
-              <textarea
-                rows={3}
-                placeholder="Add a note for staff"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                className="w-full rounded-md border border-border/80 bg-background/50 p-3 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-y"
-              />
+              <div className="relative group">
+                <textarea
+                  rows={3}
+                  placeholder="Add a note for staff"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className="w-full rounded-md border border-border/80 bg-background/50 p-3 pr-24 text-sm font-normal text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-y"
+                />
+                <span className="pointer-events-none absolute right-3 top-3 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                  Click to edit
+                </span>
+              </div>
 
               <div className="flex items-center gap-3">
                 <button

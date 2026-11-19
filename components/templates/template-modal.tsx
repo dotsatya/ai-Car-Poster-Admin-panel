@@ -339,14 +339,19 @@ export function TemplateModal({
                 <label className="text-xs font-medium text-muted-foreground block">
                   Name <span className="text-rose-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Porsche 911 GT3 RS British Racing Green & Gold"
-                  className="w-full rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
-                />
+                <div className="relative group">
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Porsche 911 GT3 RS British Racing Green & Gold"
+                    className="w-full rounded-md border border-border/80 bg-card/60 pl-3.5 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                  />
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    Click to edit
+                  </span>
+                </div>
               </div>
 
               {/* Vehicle Name & Tag */}
@@ -355,14 +360,19 @@ export function TemplateModal({
                   <label className="text-xs font-medium text-muted-foreground block">
                     Vehicle Name <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    required
-                    value={vehicle}
-                    onChange={(e) => setVehicle(e.target.value)}
-                    placeholder="e.g. Porsche 911 GT3 RS"
-                    className="w-full rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
-                  />
+                  <div className="relative group">
+                    <input
+                      type="text"
+                      required
+                      value={vehicle}
+                      onChange={(e) => setVehicle(e.target.value)}
+                      placeholder="e.g. Porsche 911 GT3 RS"
+                      className="w-full rounded-md border border-border/80 bg-card/60 pl-3.5 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                      Click to edit
+                    </span>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
@@ -412,14 +422,19 @@ export function TemplateModal({
                   <label className="text-xs font-medium text-muted-foreground block">
                     Price (per poster) <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    required
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="32.00"
-                    className="w-full rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
-                  />
+                  <div className="relative group">
+                    <input
+                      type="text"
+                      required
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      placeholder="32.00"
+                      className="w-full rounded-md border border-border/80 bg-card/60 pl-3.5 pr-24 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                      Click to edit
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -428,14 +443,19 @@ export function TemplateModal({
                 <label className="text-xs font-medium text-muted-foreground block">
                   Description <span className="text-rose-500">*</span>
                 </label>
-                <textarea
-                  rows={4}
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Deep British racing green backdrop with distressed gold lettering..."
-                  className="w-full rounded-md border border-border/80 bg-card/60 p-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-y leading-relaxed"
-                />
+                <div className="relative group">
+                  <textarea
+                    rows={4}
+                    required
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Deep British racing green backdrop with distressed gold lettering..."
+                    className="w-full rounded-md border border-border/80 bg-card/60 p-3 pr-24 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-y leading-relaxed"
+                  />
+                  <span className="pointer-events-none absolute right-3 top-3 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    Click to edit
+                  </span>
+                </div>
               </div>
 
               {/* Eligible Print Sizes */}

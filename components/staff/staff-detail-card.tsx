@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ArrowLeft, Pencil, CheckCircle2, AlertTriangle } from "lucide-react"
+import { ArrowLeft, CheckCircle2, AlertTriangle } from "lucide-react"
 import {
   StaffMember,
   StaffRole,
@@ -244,20 +244,24 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                   {staff.name}
                 </span>
                 <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
-                  <Pencil className="size-3" />
                   <span>Click to edit</span>
                 </span>
               </div>
             ) : (
               <div className="space-y-2">
-                <input
-                  type="text"
-                  value={tempName}
-                  onChange={(e) => setTempName(e.target.value)}
-                  autoFocus
-                  placeholder="Enter full name"
-                  className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
-                />
+                <div className="relative group">
+                  <input
+                    type="text"
+                    value={tempName}
+                    onChange={(e) => setTempName(e.target.value)}
+                    autoFocus
+                    placeholder="Enter full name"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+                  />
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    Click to edit
+                  </span>
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -296,20 +300,24 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
                   {staff.phone || "+1 (555) 000-0000"}
                 </span>
                 <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
-                  <Pencil className="size-3" />
                   <span>Click to edit</span>
                 </span>
               </div>
             ) : (
               <div className="space-y-2">
-                <input
-                  type="tel"
-                  value={tempPhone}
-                  onChange={(e) => setTempPhone(e.target.value)}
-                  autoFocus
-                  placeholder="+1 (555) 000-0000"
-                  className="w-full rounded-md border border-border/80 bg-[#131418] px-3.5 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
-                />
+                <div className="relative group">
+                  <input
+                    type="tel"
+                    value={tempPhone}
+                    onChange={(e) => setTempPhone(e.target.value)}
+                    autoFocus
+                    placeholder="+1 (555) 000-0000"
+                    className="w-full rounded-md border border-border/80 bg-[#131418] pl-3.5 pr-24 py-2 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+                  />
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-normal text-muted-foreground/50 group-hover:text-muted-foreground/80 group-focus-within:hidden select-none transition-colors">
+                    Click to edit
+                  </span>
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"

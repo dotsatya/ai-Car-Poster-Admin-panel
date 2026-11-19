@@ -9,7 +9,7 @@ import {
   type ProductionOrder,
   type ProductionStage,
 } from "@/lib/demoProduction"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Search } from "lucide-react"
 
 export function ProductionClientView() {
   const router = useRouter()
@@ -189,12 +189,13 @@ export function ProductionClientView() {
       <div className="flex flex-col md:flex-row gap-3 items-center w-full">
         {/* Search */}
         <div className="relative flex-1 w-full">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/60" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search order no. or email"
-            className="w-full rounded-md border border-border/80 bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
+            className="w-full rounded-md border border-border/80 bg-card pl-9.5 pr-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
           />
         </div>
 

@@ -14,14 +14,14 @@ function CustomersPageContent() {
   const [search, setSearch] = React.useState(initialQuery)
   const [accountFilter, setAccountFilter] = React.useState("all")
   const [sortBy, setSortBy] = React.useState("recent")
-  const [timeRange, setTimeRange] = React.useState(initialQuery ? "1y" : "30d")
+  const [timeRange, setTimeRange] = React.useState(initialQuery ? "30d" : "1y")
 
   // React to search params update
   React.useEffect(() => {
     const q = searchParams.get("search") || searchParams.get("q") || searchParams.get("email")
     if (q !== null && q !== undefined) {
       setSearch(q)
-      setTimeRange("1y")
+      setTimeRange("30d")
     }
   }, [searchParams])
 
