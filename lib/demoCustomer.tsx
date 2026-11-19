@@ -1,5 +1,6 @@
 import {
   CUSTOMERS,
+  DATA_AS_OF,
   DISPLAY_TIME_ZONE,
   formatDate,
   formatDateTime,
@@ -60,6 +61,8 @@ export interface DemoCustomer {
   totalSpent: string
   joined: string
   joinedFull: string
+  joinedAt: string
+  daysAgo: number
   lastSignIn: string
   generationAllowance: { used: number; total: number }
   generations: GenerationHistoryItem[]
@@ -69,6 +72,12 @@ export interface DemoCustomer {
 
 const shortDate = (iso: string) =>
   new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: DISPLAY_TIME_ZONE }).format(new Date(iso))
+
+const calcDaysAgo = (iso: string) => {
+  const asOf = new Date(DATA_AS_OF).getTime()
+  const created = new Date(iso).getTime()
+  return Math.max(0, Math.floor((asOf - created) / (1000 * 60 * 60 * 24)))
+}
 
 export const DEMO_CUSTOMERS: DemoCustomer[] = CUSTOMERS.map((c) => {
   const s = getCustomerSummary(c.email)
@@ -86,6 +95,8 @@ export const DEMO_CUSTOMERS: DemoCustomer[] = CUSTOMERS.map((c) => {
     totalSpent: `$${Math.round(s.totalSpent).toLocaleString("en-US")}`,
     joined: shortDate(c.joinedAt),
     joinedFull: formatDate(c.joinedAt),
+    joinedAt: c.joinedAt,
+    daysAgo: calcDaysAgo(c.joinedAt),
     lastSignIn: formatDateTime(c.lastSignInAt),
     generationAllowance: { used: s.individualUsed, total: c.generationAllowance.individualTotal },
     generations: [...getGenerationsByEmail(c.email)].reverse().map((g) => ({

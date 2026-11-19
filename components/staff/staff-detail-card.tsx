@@ -182,7 +182,7 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-5xl">
+    <div className="w-full flex flex-col gap-4">
       {/* 1. "Back to Staff & Roles" link */}
       <div>
         <Link
@@ -346,9 +346,9 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
 
         {/* 3. Role section: Row of 3 radio buttons & live permissions summary */}
         <div className="pt-2 border-t border-border/60 space-y-3">
-          <label className="text-xs text-muted-foreground block font-normal">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Role
-          </label>
+          </h3>
 
           {/* Row of three radio buttons */}
           <div className="flex flex-wrap items-center gap-6 sm:gap-8 pt-1">
@@ -431,9 +431,9 @@ export function StaffDetailCard({ staff: initialStaff }: StaffDetailCardProps) {
 
           {/* Right: Staff action history list */}
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
               Staff action history
-            </span>
+            </h3>
             <div className="space-y-2 text-xs sm:text-sm text-foreground/90">
               {staff.actions.map((act) => (
                 <div key={act.id} className="flex items-start gap-2 leading-relaxed">

@@ -446,7 +446,7 @@ function ReportsContent() {
             <button
               type="button"
               onClick={handleApplyFilters}
-              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border/80 bg-card/80 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary hover:border-primary/40 transition-colors cursor-pointer shadow-sm shrink-0 active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-primary/20 bg-primary/40 px-4 py-2 text-sm font-medium text-foreground hover:bg-primary/60 hover:border-primary/40 transition-colors cursor-pointer shadow-sm shrink-0 active:scale-[0.98]"
             >
               <span>Apply</span>
             </button>

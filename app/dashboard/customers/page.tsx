@@ -14,12 +14,14 @@ function CustomersPageContent() {
   const [search, setSearch] = React.useState(initialQuery)
   const [accountFilter, setAccountFilter] = React.useState("all")
   const [sortBy, setSortBy] = React.useState("recent")
+  const [timeRange, setTimeRange] = React.useState(initialQuery ? "1y" : "30d")
 
   // React to search params update
   React.useEffect(() => {
     const q = searchParams.get("search") || searchParams.get("q") || searchParams.get("email")
     if (q !== null && q !== undefined) {
       setSearch(q)
+      setTimeRange("1y")
     }
   }, [searchParams])
 
@@ -41,6 +43,17 @@ function CustomersPageContent() {
         }
       }
 
+      // 3. Time range filter: 1w (7d), 30d, 6m (180d), 1y (365d)
+      if (timeRange === "1w") {
+        if ((cust.daysAgo ?? 0) > 7) return false
+      } else if (timeRange === "30d") {
+        if ((cust.daysAgo ?? 0) > 30) return false
+      } else if (timeRange === "6m") {
+        if ((cust.daysAgo ?? 0) > 180) return false
+      } else if (timeRange === "1y") {
+        if ((cust.daysAgo ?? 0) > 365) return false
+      }
+
       return true
     }).sort((a, b) => {
       if (sortBy === "posters") return b.posters - a.posters
@@ -51,7 +64,7 @@ function CustomersPageContent() {
       }
       return 0 // default order matching the mock dataset
     })
-  }, [search, accountFilter, sortBy])
+  }, [search, accountFilter, sortBy, timeRange])
 
   // Export filtered customers as clean CSV
   function handleExportCSV() {
@@ -76,8 +89,12 @@ function CustomersPageContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Page Header */}
-      <CustomerHeader onExportCSV={handleExportCSV} />
+      {/* Page Header with Time Range selector and Export CSV */}
+      <CustomerHeader
+        selectedRange={timeRange}
+        onRangeChange={setTimeRange}
+        onExportCSV={handleExportCSV}
+      />
 
       {/* Filter Bar */}
       <CustomerFilters
@@ -87,6 +104,8 @@ function CustomersPageContent() {
         onAccountFilterChange={setAccountFilter}
         sortBy={sortBy}
         onSortByChange={setSortBy}
+        dateFilter={timeRange}
+        onDateFilterChange={setTimeRange}
       />
 
       {/* Customer List Table & Pagination */}

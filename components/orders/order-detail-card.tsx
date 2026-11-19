@@ -3,24 +3,24 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ExternalLink,
   Download,
   Check,
   ArrowRight,
-  WandSparkles,
-  Package,
+  X,
+  Eye,
+  User,
+  Image as ImageIcon,
 } from "lucide-react";
-import { DemoOrder } from "@/lib/demoOrder";
+import { DemoOrder, OrderItem } from "@/lib/demoOrder";
 
 interface OrderDetailCardProps {
   order: DemoOrder;
 }
 
 export function OrderDetailCard({ order }: OrderDetailCardProps) {
-  const router = useRouter();
   const [note, setNote] = React.useState("");
   const [savedNotes, setSavedNotes] = React.useState<string[]>(
     order.notes || [],
@@ -29,6 +29,25 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
   const [currentStage, setCurrentStage] = React.useState<DemoOrder["stage"]>(
     order.stage,
   );
+  const [previewArtwork, setPreviewArtwork] = React.useState<OrderItem | null>(null);
+  const [downloadingId, setDownloadingId] = React.useState<string | null>(null);
+  const [downloadToast, setDownloadToast] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setPreviewArtwork(null);
+      }
+    };
+    if (previewArtwork) {
+      window.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [previewArtwork]);
 
   React.useEffect(() => {
     try {
@@ -70,9 +89,50 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
     setTimeout(() => setIsSaved(false), 2000);
   }
 
-  function handleDownloadArt(itemName: string) {
-    alert(`Downloading 300 DPI museum-grade print asset for: ${itemName}`);
-  }
+  const handleDownloadArt = async (artItem: OrderItem) => {
+    const imageSrc = artItem.image || "/template photo/1.webp";
+    const cleanArtName = artItem.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const ext = imageSrc.includes(".")
+      ? imageSrc.split(".").pop()?.split("?")[0] || "webp"
+      : "webp";
+    const fileName = `order-${order.cleanId}-${cleanArtName || "artwork"}.${ext}`;
+
+    setDownloadingId(artItem.id);
+    setDownloadToast(`Downloading "${artItem.name}"...`);
+
+    try {
+      const response = await fetch(imageSrc);
+      if (!response.ok) throw new Error("Fetch failed");
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+
+      setDownloadToast(`Downloaded "${artItem.name}"`);
+    } catch {
+      // Fallback: direct anchor download
+      const link = document.createElement("a");
+      link.href = imageSrc;
+      link.download = fileName;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setDownloadToast(`Downloaded "${artItem.name}"`);
+    } finally {
+      setTimeout(() => setDownloadingId(null), 800);
+      setTimeout(() => setDownloadToast(null), 3500);
+    }
+  };
 
   const getPaymentBadge = (status: DemoOrder["payment"]["status"]) => {
     switch (status) {
@@ -114,7 +174,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
   const stageBadge = getStageBadge(currentStage || order.stage);
 
   return (
-    <div className="flex flex-col gap-4 max-w-5xl">
+    <div className="w-full flex flex-col gap-4">
       {/* Back to orders navigation */}
       <div>
         <Link
@@ -157,7 +217,7 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
             className="inline-flex items-center justify-center gap-2 rounded-md border border-primary/40 bg-primary/10 hover:bg-primary/20 text-foreground hover:text-white text-xs sm:text-sm font-medium px-4 py-2 transition-all shadow-sm active:scale-[0.98] w-fit group"
             title="Open this order in Production queue to update stage"
           >
-            <p>Go to Production Page and uypdate the current Stage</p>
+            <p>Go to Production Page and update the current Stage</p>
             <ArrowRight className="size-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
@@ -175,6 +235,21 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
             <p className="text-sm font-normal text-muted-foreground">
               {order.customer.name}, {order.customer.phone}
             </p>
+            <div className="pt-2">
+              <Link
+                href={
+                  order.customer.cleanId
+                    ? `/dashboard/customers/${order.customer.cleanId}`
+                    : `/dashboard/customers?search=${encodeURIComponent(order.customer.email)}`
+                }
+                className="inline-flex items-center gap-1.5 rounded-md border border-border/80 bg-secondary/60 hover:bg-secondary hover:border-primary/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-all cursor-pointer shadow-xs group w-fit"
+                title={`View customer details for ${order.customer.name}`}
+              >
+                <User className="size-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                <span>Customer details</span>
+                <ArrowRight className="size-3 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </div>
           </div>
 
           {/* Ship to */}
@@ -212,9 +287,9 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
 
         {/* Artwork items section */}
         <div className="pt-2">
-          <span className="text-xs font-normal text-muted-foreground block mb-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
             Artwork items
-          </span>
+          </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -234,39 +309,44 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                     key={art.id}
                     className="hover:bg-secondary/20 transition-colors"
                   >
-                    {/* Artwork name & poster photo thumbnail */}
+                    {/* Artwork name & poster photo thumbnail (Clickable trigger for pop up modal) */}
                     <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3.5">
-                        <div className="relative size-12 rounded-sm overflow-hidden bg-black/60 border border-border/60 shrink-0 shadow-sm">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewArtwork(art)}
+                        className="flex items-center gap-3.5 text-left group cursor-pointer w-full focus:outline-none"
+                        title="Click to view artwork preview and download"
+                      >
+                        <div className="relative size-12 rounded-sm overflow-hidden bg-black/60 border border-border/60 shrink-0 shadow-sm transition-all duration-200 group-hover:border-primary/70 group-hover:shadow-[0_0_12px_rgba(216,49,56,0.25)]">
                           {art.image ? (
                             <Image
                               src={art.image}
                               alt={art.name}
                               fill
                               sizes="48px"
-                              className="object-cover"
+                              className="object-cover transition-transform duration-200 group-hover:scale-110"
                             />
                           ) : (
                             <div className="size-full flex items-center justify-center text-[10px] font-semibold text-muted-foreground">
                               ART
                             </div>
                           )}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <Eye className="size-4 text-white drop-shadow" />
+                          </div>
                         </div>
                         <div className="flex flex-col">
-                          <span className="font-medium text-foreground text-sm leading-snug">
-                            {art.name}
-                          </span>
                           {art.type === "Combined" ? (
-                            <span className="inline-block mt-1 w-fit rounded-sm bg-blue-950/80 text-blue-400 border border-blue-800/40 px-2 py-0.5 text-[10px] font-medium leading-none">
+                            <span className="inline-block w-fit rounded-sm bg-blue-950/80 text-blue-400 border border-blue-800/40 px-2 py-0.5 text-[10px] font-medium leading-none">
                               Combined
                             </span>
                           ) : (
-                            <span className="text-xs font-normal text-muted-foreground mt-0.5">
+                            <span className="text-xs font-normal text-muted-foreground">
                               Individual
                             </span>
                           )}
                         </div>
-                      </div>
+                      </button>
                     </td>
 
                     <td className="py-3.5 px-4 font-normal text-foreground text-sm">
@@ -286,14 +366,31 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
                     </td>
 
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => handleDownloadArt(art.name)}
-                        title="Download Artwork"
-                        className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-secondary cursor-pointer"
-                      >
-                        <Download className="size-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setPreviewArtwork(art)}
+                          title="Preview Artwork"
+                          className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-md hover:bg-secondary cursor-pointer"
+                        >
+                          <Eye className="size-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadArt(art)}
+                          disabled={downloadingId === art.id}
+                          title="Download Artwork Picture"
+                          className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-md hover:bg-secondary cursor-pointer disabled:opacity-50"
+                        >
+                          <Download
+                            className={`size-4 ${
+                              downloadingId === art.id
+                                ? "animate-bounce text-primary"
+                                : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -325,9 +422,9 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
           {/* Status history */}
           <div className="space-y-2">
-            <span className="text-xs font-normal text-muted-foreground block mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
               Status history
-            </span>
+            </h3>
             <div className="space-y-2">
               {order.statusHistory.map((step, idx) => (
                 <div key={idx} className="text-sm">
@@ -345,9 +442,9 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
 
           {/* Internal notes */}
           <div className="space-y-2">
-            <span className="text-xs font-normal text-muted-foreground block mb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Internal notes
-            </span>
+            </h3>
             <form onSubmit={handleSaveNote} className="space-y-2">
               <textarea
                 rows={3}
@@ -387,198 +484,140 @@ export function OrderDetailCard({ order }: OrderDetailCardProps) {
             </form>
           </div>
         </div>
-
-        {/* Customer's Recent AI Generations (Max 5 Latest) */}
-        <div className="pt-4 border-t border-border/60">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-normal text-muted-foreground block">
-                Customer&apos;s Recent AI Generations
-              </span>
-              <span className="text-xs text-muted-foreground">
-                (Latest {order.customerRecentGenerations?.length || 0})
-              </span>
-            </div>
-            <Link
-              href={`/dashboard/ai-generations?search=${encodeURIComponent(order.customer.email)}`}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline hover:text-primary/90 transition-colors"
-            >
-              <WandSparkles className="size-3 text-muted-foreground" />
-              <span>View All Generations</span>
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                  <th className="py-3.5 px-4 font-medium">Date</th>
-                  <th className="py-3.5 px-4 font-medium">Template</th>
-                  <th className="py-3.5 px-4 font-medium">Type</th>
-                  <th className="py-3.5 px-4 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {!order.customerRecentGenerations ||
-                order.customerRecentGenerations.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="py-6 px-4 text-center text-xs text-muted-foreground"
-                    >
-                      No recent AI generations recorded for this customer.
-                    </td>
-                  </tr>
-                ) : (
-                  order.customerRecentGenerations.map((gen) => (
-                    <tr
-                      key={gen.id}
-                      onClick={() =>
-                        router.push(`/dashboard/ai-generations/${gen.jobId}`)
-                      }
-                      className="hover:bg-secondary/20 transition-colors cursor-pointer group"
-                    >
-                      <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
-                        {gen.date}
-                      </td>
-                      <td className="py-3.5 px-4 font-medium text-foreground text-sm">
-                        {gen.template}
-                      </td>
-                      <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
-                        {gen.type}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        {gen.status === "Completed" ? (
-                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-emerald-950/70 text-emerald-400 border-emerald-800/40">
-                            Completed
-                          </span>
-                        ) : gen.status === "Processing" ? (
-                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-amber-950/70 text-amber-400 border-amber-800/40">
-                            Processing
-                          </span>
-                        ) : gen.status === "Queued" ? (
-                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-zinc-800/70 text-zinc-300 border-zinc-700/40">
-                            Queued
-                          </span>
-                        ) : (
-                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border bg-rose-950/70 text-rose-400 border-rose-800/40">
-                            Failed
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Customer's Recent Orders (Max 5 Latest) */}
-        <div className="pt-4 border-t border-border/60">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-normal text-muted-foreground block">
-                Customer&apos;s Other Recent Orders
-              </span>
-              <span className="text-xs text-muted-foreground">
-                (Latest {order.customerRecentOrders?.length || 0})
-              </span>
-            </div>
-            <Link
-              href={`/dashboard/orders?search=${encodeURIComponent(order.customer.email)}`}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline hover:text-primary/90 transition-colors"
-            >
-              <Package className="size-3 text-muted-foreground" />
-              <span>View All Order History</span>
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border/60 text-xs font-medium text-muted-foreground">
-                  <th className="py-3.5 px-4 font-medium">Order</th>
-                  <th className="py-3.5 px-4 font-medium">Items</th>
-                  <th className="py-3.5 px-4 font-medium">Total</th>
-                  <th className="py-3.5 px-4 font-medium">Payment</th>
-                  <th className="py-3.5 px-4 font-medium">Stage</th>
-                  <th className="py-3.5 px-4 font-medium">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {!order.customerRecentOrders ||
-                order.customerRecentOrders.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="py-6 px-4 text-center text-xs text-muted-foreground"
-                    >
-                      No other orders recorded for this customer.
-                    </td>
-                  </tr>
-                ) : (
-                  order.customerRecentOrders.map((ord) => {
-                    const isCurrent = ord.cleanId === order.cleanId;
-                    return (
-                      <tr
-                        key={ord.id}
-                        onClick={() =>
-                          router.push(`/dashboard/orders/${ord.cleanId}`)
-                        }
-                        className={`transition-colors cursor-pointer group ${
-                          isCurrent
-                            ? "bg-secondary/40 font-medium"
-                            : "hover:bg-secondary/20"
-                        }`}
-                      >
-                        <td className="py-3.5 px-4 font-semibold text-foreground group-hover:text-primary transition-colors text-sm">
-                          {ord.id}{" "}
-                          {isCurrent && (
-                            <span className="text-[10px] text-primary font-normal ml-1 border border-primary/40 bg-primary/10 px-1.5 py-0.2 rounded">
-                              Current
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 font-normal text-foreground text-sm">
-                          {ord.itemsCount}{" "}
-                          {ord.itemsCount === 1 ? "item" : "items"}
-                        </td>
-                        <td className="py-3.5 px-4 font-semibold text-foreground text-sm">
-                          {ord.total}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span
-                            className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getPaymentBadge(
-                              ord.payment,
-                            )}`}
-                          >
-                            {ord.payment}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span
-                            className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-md border ${getStageBadge(
-                              ord.stage,
-                            )}`}
-                          >
-                            {ord.stage}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 font-normal text-muted-foreground text-sm">
-                          {ord.date}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
+
+      {/* Artwork Preview Modal */}
+      {previewArtwork && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Dark Blur Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/85 backdrop-blur-sm transition-opacity"
+            onClick={() => setPreviewArtwork(null)}
+          />
+
+          {/* Modal Container */}
+          <div className="relative z-10 w-full max-w-2xl rounded-xl border border-border/80 bg-[#121315] text-card-foreground shadow-2xl p-5 sm:p-6 space-y-5 my-auto max-h-[92vh] flex flex-col outline-none">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between gap-4 border-b border-border/50 pb-4">
+              <div className="space-y-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-mono text-muted-foreground">
+                    Artwork Preview
+                  </span>
+                  <span className="text-muted-foreground/40">•</span>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    Order {order.id}
+                  </span>
+                  {previewArtwork.type === "Combined" ? (
+                    <span className="rounded-sm bg-blue-950/80 text-blue-400 border border-blue-800/40 px-2 py-0.5 text-[10px] font-medium leading-none">
+                      Combined
+                    </span>
+                  ) : (
+                    <span className="rounded-sm bg-secondary text-muted-foreground border border-border/60 px-2 py-0.5 text-[10px] font-medium leading-none">
+                      Individual
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-foreground truncate">
+                  {previewArtwork.name}
+                </h3>
+              </div>
+
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setPreviewArtwork(null)}
+                className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-md hover:bg-secondary cursor-pointer shrink-0"
+                aria-label="Close dialog"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            {/* Modal Body - Image Preview */}
+            <div className="relative w-full rounded-lg bg-black/80 border border-border/60 p-3 sm:p-4 flex items-center justify-center overflow-hidden min-h-[260px] max-h-[52vh]">
+              {previewArtwork.image ? (
+                <div className="relative w-full h-[46vh] flex items-center justify-center">
+                  <Image
+                    src={previewArtwork.image}
+                    alt={previewArtwork.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 640px"
+                    className="object-contain rounded-md"
+                    priority
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-muted-foreground py-16 gap-2">
+                  <ImageIcon className="size-12 opacity-30" />
+                  <span className="text-xs">No artwork image available</span>
+                </div>
+              )}
+            </div>
+
+            {/* Specifications strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-secondary/30 border border-border/50 rounded-lg p-3 text-xs">
+              <div>
+                <span className="text-muted-foreground block text-[11px]">Print Size</span>
+                <span className="font-medium text-foreground">{previewArtwork.size}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground block text-[11px]">Quantity</span>
+                <span className="font-medium text-foreground">{previewArtwork.qty}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground block text-[11px]">Unit Price</span>
+                <span className="font-medium text-foreground">{previewArtwork.unitPrice}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground block text-[11px]">Line Total</span>
+                <span className="font-semibold text-foreground">{previewArtwork.lineTotal}</span>
+              </div>
+            </div>
+
+            {/* Modal Footer with Download Button */}
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-border/50">
+              <span className="text-xs text-muted-foreground hidden sm:inline-block">
+                300 DPI Archival Art Asset
+              </span>
+
+              <div className="flex items-center gap-2.5 ml-auto">
+                <button
+                  type="button"
+                  onClick={() => setPreviewArtwork(null)}
+                  className="rounded-md border border-border/80 bg-secondary/40 text-foreground hover:bg-secondary/70 text-xs sm:text-sm font-medium px-4 py-2 transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleDownloadArt(previewArtwork)}
+                  disabled={downloadingId === previewArtwork.id}
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-primary hover:bg-brand-red-hover text-primary-foreground text-xs sm:text-sm font-medium px-4 py-2 transition-colors cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className={`size-4 ${downloadingId === previewArtwork.id ? "animate-bounce" : ""}`} />
+                  <span>
+                    {downloadingId === previewArtwork.id ? "Downloading..." : "Download Picture"}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Download Toast Notification */}
+      {downloadToast && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-zinc-900 border border-primary/40 text-foreground px-4 py-2.5 rounded-md shadow-2xl text-xs font-medium animate-in fade-in slide-in-from-bottom-2">
+          <Check className="size-4 text-primary shrink-0" />
+          <span>{downloadToast}</span>
+        </div>
+      )}
     </div>
   );
 }

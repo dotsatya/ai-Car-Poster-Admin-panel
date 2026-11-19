@@ -98,7 +98,7 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-5xl">
+    <div className="w-full flex flex-col gap-4">
       {/* Back to customers navigation */}
       <div>
         <Link
@@ -238,10 +238,10 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
         <div className="pt-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-normal text-muted-foreground block">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Recent generations
-              </span>
-              <span className="text-xs text-muted-foreground">
+              </h3>
+              <span className="text-xs text-muted-foreground/80">
                 (Latest {displayedGenerations.length} of {customer.generations.length})
               </span>
             </div>
@@ -326,10 +326,10 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
         <div className="pt-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-normal text-muted-foreground block">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Order history
-              </span>
-              <span className="text-xs text-muted-foreground">
+              </h3>
+              <span className="text-xs text-muted-foreground/80">
                 (Latest {displayedOrders.length} of {customer.ordersList.length} {customer.ordersList.length === 1 ? "order" : "orders"})
               </span>
             </div>
@@ -460,9 +460,9 @@ export function CustomerDetailCard({ customer }: CustomerDetailCardProps) {
 
           {/* Action history */}
           <div className="space-y-2">
-            <span className="text-xs font-normal text-muted-foreground block mb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Action history
-            </span>
+            </h3>
             <div className="space-y-2.5">
               {actionHistory.length === 0 ? (
                 <p className="text-xs text-muted-foreground">

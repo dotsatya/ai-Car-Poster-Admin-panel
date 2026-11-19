@@ -37,7 +37,7 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-5xl">
+    <div className="w-full flex flex-col gap-4">
       {/* Back to AI generations link */}
       <div>
         <Link
@@ -120,9 +120,9 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
           {/* Uploaded car photo */}
           <div>
-            <span className="text-xs text-muted-foreground block mb-2 font-normal">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Uploaded car photo
-            </span>
+            </h3>
             <div className="relative rounded-md border border-border/60 bg-[#141618] h-48 sm:h-52 flex flex-col items-center justify-center p-4 text-center overflow-hidden">
               {job.carPhotoInfo.image ? (
                 <>
@@ -149,9 +149,9 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
 
           {/* Output */}
           <div>
-            <span className="text-xs text-muted-foreground block mb-2 font-normal">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Output
-            </span>
+            </h3>
             {job.state === "Failed" || !job.outputInfo?.image ? (
               <div className="rounded-md border border-rose-950/60 bg-[#250d0f] h-48 sm:h-52 flex items-center justify-center p-4 text-center">
                 <span className="text-xs font-medium text-rose-400">
@@ -182,9 +182,9 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
         {/* Error Section (if applicable) */}
         {job.error && (
           <div className="space-y-1 pt-1">
-            <span className="text-xs text-muted-foreground block font-normal">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-rose-400 mb-1">
               Error
-            </span>
+            </h3>
             <p className="text-xs sm:text-sm text-rose-400 font-normal leading-relaxed">
               {job.error}
             </p>
@@ -195,9 +195,9 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-3">
           {/* Timeline */}
           <div>
-            <span className="text-xs text-muted-foreground block mb-2 font-normal">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Timeline
-            </span>
+            </h3>
             <div className="space-y-1.5 text-xs sm:text-sm font-semibold text-foreground">
               {job.timeline.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-1.5">
@@ -211,9 +211,9 @@ export function AiJobDetailCard({ job }: AiJobDetailCardProps) {
 
           {/* Customer usage */}
           <div>
-            <span className="text-xs text-muted-foreground block mb-2 font-normal">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Customer usage
-            </span>
+            </h3>
             <div className="space-y-1 text-xs sm:text-sm font-semibold text-foreground">
               <p>
                 Individual: {job.customerUsage.individualUsed} of{" "}

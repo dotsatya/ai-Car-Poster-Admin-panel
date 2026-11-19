@@ -58,6 +58,8 @@ export interface DemoOrder {
   id: string
   cleanId: string
   customer: {
+    id?: string
+    cleanId?: string
     name: string
     email: string
     phone: string
@@ -163,6 +165,8 @@ export const DEMO_ORDERS: DemoOrder[] = [...ORDERS].reverse().map((o) => {
     id: o.id,
     cleanId: o.cleanId,
     customer: {
+      id: customer?.id || "",
+      cleanId: customer?.cleanId || "",
       name: customer?.name || o.shipping.name,
       email: o.customerEmail,
       phone: customer?.phone || "",

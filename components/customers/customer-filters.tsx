@@ -10,6 +10,8 @@ interface CustomerFiltersProps {
   onAccountFilterChange: (value: string) => void
   sortBy: string
   onSortByChange: (value: string) => void
+  dateFilter?: string
+  onDateFilterChange?: (value: string) => void
 }
 
 export function CustomerFilters({
@@ -19,9 +21,11 @@ export function CustomerFilters({
   onAccountFilterChange,
   sortBy,
   onSortByChange,
+  dateFilter,
+  onDateFilterChange,
 }: CustomerFiltersProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
       {/* 1. Search Input */}
       <div className="relative">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/60" />
@@ -69,6 +73,29 @@ export function CustomerFilters({
           </option>
           <option value="orders" className="bg-[#121315] text-foreground">
             Most orders
+          </option>
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
+      </div>
+
+      {/* 4. Date range filter */}
+      <div className="relative">
+        <select
+          value={dateFilter || "30d"}
+          onChange={(e) => onDateFilterChange?.(e.target.value)}
+          className="w-full appearance-none rounded-md border border-border/80 bg-card/60 px-3.5 py-2 text-sm font-medium text-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors cursor-pointer pr-9"
+        >
+          <option value="1w" className="bg-[#121315] text-foreground">
+            Last week
+          </option>
+          <option value="30d" className="bg-[#121315] text-foreground">
+            Last 30 days
+          </option>
+          <option value="6m" className="bg-[#121315] text-foreground">
+            Last 6 mon
+          </option>
+          <option value="1y" className="bg-[#121315] text-foreground">
+            Last 1 year
           </option>
         </select>
         <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/70" />
